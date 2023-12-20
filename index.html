@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=0.6">
+	<script type="text/javascript" src="script.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+	<script src=" https://cdn.jsdelivr.net/npm/underscore@1.13.6/underscore-umd-min.js "></script>
+	<script src="https://colorjs.io/dist/color.global.js"></script>
+	<title>Sumo H2H for sumo games</title>
+</head>
+<body>
+	<div id="banzukeContainer"></div>
+	<dialog id="matchesBox" class="hidden">
+		<div id="tableHead">
+			<button id="closeButton">Close</button>
+		</div>
+	</dialog>
+<style>
+
+body {
+	font-family: Helvetica, Arial, sans-serif;
+}
+	
+input {
+	display: none;
+}
+
+#banzukeContainer {
+	display: grid;
+  	margin: auto;
+  	width: fit-content;
+  	margin-bottom: 40vh;
+}
+
+table {
+	border: 2px solid black;
+	border-collapse: collapse;
+	font-size: 14px;
+	margin-bottom: 20px;
+	background: #dbdbdb;
+}
+
+td, th {
+	border: 1px solid #00000082;
+	min-width: 20px;
+	padding: 1px 5px;
+}
+
+td {
+	min-width: 30px;
+}
+
+th {
+	font-weight: normal;
+}
+
+thead th {
+	background: #8888f3;
+	font-weight: bold;
+}
+
+.sanyakuRow > * {
+	background: #e0e09a;
+}
+
+#sumoRefLink {
+	text-decoration: none;
+  	border-radius: 5px;
+  	width: 30px;
+  	display: inline-block;
+}
+
+label {
+	width: 100%;
+  	display: inline-block;
+  	cursor: pointer;
+  	padding: 1px 2px;
+  	margin-left: -4px;
+  	border-radius: 3px;
+  	border: 2px outset #51515180;
+  	background: white;
+  	color: #1a1a1a;
+  	text-shadow: 1px 1px #ffffff7d;
+}
+
+label:hover {
+	border: 2px solid blue;
+}
+
+.divDeb {
+	border-color: #ff0000bd;
+}
+
+.rankDeb {
+	border-color: #ff0000bd #51515180 #ff0000bd #51515180;
+}
+
+.selected {
+	background: #6060ff;
+  	color: white;
+  	text-shadow: 1px 1px #00000082;
+}
+
+.met {
+}
+
+.notMet {
+	background: lightgray;
+}
+
+.filled {
+	text-align: center;
+	cursor: default;
+}
+
+.filled span {
+	font-size: 13px;
+	color: dimgray;
+}
+
+.hasH2h span {
+	color: darkblue;
+	font-size: 14px;
+}
+
+.hasH2h span:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+dialog {
+	position: fixed;
+  	left: 1%;
+  	right: auto;
+  	top: 60%;
+  	max-height: 40%;
+  	padding: 0px;
+  	border: none;
+  	box-shadow: 0 0 15px 5px #00000082;
+  	overflow-y: scroll;
+  	display: flex;
+  	flex-direction: column-reverse;
+}
+
+.shiro, .kuro {
+	font-size: large;
+}
+
+.shiro {
+	color: white;
+	text-shadow: 1px 1px #000, -1px 1px #000, -1px -1px #000, 1px -1px #000;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a {
+  text-decoration: none;
+  color: darkblue;
+}
+
+#matchesTable {
+	margin: 0;
+	background: #e3ffe3;
+  	border-top: none;
+}
+
+#matchesTable td {
+  	border-color: #000000bf;
+}
+
+#tableHead {
+	top: 0;
+  	position: sticky;
+  	padding: 4px;
+  	text-align: center;
+  	font-size: 15px;
+  	background: white;
+  	border-bottom: 2px solid black;
+}
+
+#closeButton {
+	float: right;
+}
+
+#h2hText {
+	font-size: 15px;
+}
+
+.hidden {
+	display: none;
+}
+
+.rCell {
+	text-align: justify;
+	line-height: 5pt;
+  	padding: 8px 4px 0px 4px;
+}
+
+.rCell::after {
+	content: "";
+	width: 100%;
+	display: inline-block;
+}
+
+</style>
+</body>
+</html>
