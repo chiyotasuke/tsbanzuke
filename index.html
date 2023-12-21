@@ -5,11 +5,20 @@
 	<meta name="viewport" content="width=device-width, initial-scale=0.7">
 	<script type="text/javascript" src="script.js"></script>
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-	<script src=" https://cdn.jsdelivr.net/npm/underscore@1.13.6/underscore-umd-min.js "></script>
-	<script src="https://colorjs.io/dist/color.global.js"></script>
-	<title>Sumo H2H for sumo games</title>
+	<title>H2H records banzuke</title>
 </head>
 <body>
+	<header>
+		<h1>
+			<b>Taisen seiseki (head-to-head records) banzuke</b>
+			<span id="credit">Powered by <a href="https://www.sumo-api.com/" target="_blank">The Sumo API</a></span>
+		</h1>
+		<ul>
+			<li>Click on a rikishi to see his win-loss records displayed alongside the rikishi he could face during the basho. Based on the records, the opponents are colored</li>
+			<li>Then you can click on a record number and take a look at all of the matchups</li>
+		</ul>
+	</header>
+	<h2></h2>
 	<div id="banzukeContainer"></div>
 	<dialog id="matchesBox" class="hidden">
 		<div id="tableHead">
@@ -20,6 +29,41 @@
 
 body {
 	font-family: Helvetica, Arial, sans-serif;
+	margin: 0;
+	background: #c5ffb1;
+}
+
+header {
+  font-size: 15px;
+  top: 0;
+  position: relative;
+  padding: 10px;
+  background: #c7c7ff;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: 22px;
+  font-family: serif;
+  text-align: center;
+}
+
+#credit {
+  float: right;
+  font-size: smaller;
+  font-weight: normal;
+  position: absolute;
+  right: 1%;
+  display: block;
+}
+
+ul {
+  margin-top: 20px;
+}
+
+h2 {
+  text-align: center;
+  text-decoration: underline;
 }
 	
 input {
@@ -141,6 +185,9 @@ dialog {
   	overflow-y: scroll;
   	display: flex;
   	flex-direction: column-reverse;
+  	border-bottom: 25px solid transparent;
+  	box-sizing: border-box;
+  	border-radius: 10px;
 }
 
 .shiro, .kuro {
@@ -164,8 +211,8 @@ a {
 #matchesTable {
 	margin: 0;
 	background: #e3ffe3;
-  	border-top: none;
-  	margin-bottom: 20px;
+	border-width: 3px;
+	border-color: #262626;
 }
 
 #matchesTable td {
@@ -179,7 +226,6 @@ a {
   	text-align: center;
   	font-size: 15px;
   	background: white;
-  	border-bottom: 2px solid black;
 }
 
 #closeButton {

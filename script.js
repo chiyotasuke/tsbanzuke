@@ -6,6 +6,7 @@ window.onload = function () {
 	const divAbbr = {"Makuuchi": 'M', "Juryo": 'J', "Makushita": "Ms", "Sandanme": "Sd", "Jonidan": "Jd", "Jonokuchi": "Jk", "Mae-zumo": "Mz"};
 	const rankAbbr = {"Yokozuna": 'Y', "Ozeki": 'O', "Sekiwake": 'S', "Komusubi": 'K', "Maegashira": 'M', "Juryo": 'J', 
 					  "Makushita": "Ms", "Sandanme": "Sd", "Jonidan": "Jd", "Jonokuchi": "Jk", "Mae-zumo": "Mz"}
+	const bashoName = {"01": "Hatsu", "03": "Haru", "05": "Natsu", "07": "Nagoya", "09": "Aki", "11": "Kyushu"};
 	var fetching = false;
 	var divRankQty = [];
 	var matchInfo = [];
@@ -141,6 +142,8 @@ window.onload = function () {
 		document.getElementById("matchesBox").classList.add("hidden");
 		document.getElementById("matchesBox").close();
 	});
+
+	document.getElementsByTagName("h2")[0].innerText = bashoName[banzukeDate.slice(4)] + ' ' + banzukeDate.slice(0, 4);
 
 	function addClickFunction() {
 		var cells = document.getElementsByName("rs");
