@@ -439,11 +439,12 @@ window.onload = function () {
 									dialogBox.show();
 								}
 								if (dialogBox.children[1] != undefined) {
-									dialogBox.children[1].children[0].remove();
-									dialogBox.children[0].remove();
+									dialogBox.children[0].children[0].remove();
+									dialogBox.children[1].remove();
 								}
 								dialogBox.children[0].prepend(headerText);
-								dialogBox.prepend(table);
+								dialogBox.appendChild(table);
+								dialogBox.scrollTop = dialogBox.scrollHeight;
 							});
 						}
 
