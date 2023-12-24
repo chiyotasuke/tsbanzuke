@@ -1,5 +1,5 @@
 
-window.onload = function () {
+window.onload = async function () {
 	const banzukeDate = "202311"; // 196909 until now for sekitori; from 198901 all lower division matchups are complete
 	const bashoDate = new Date(parseInt(banzukeDate.slice(0, 4)), parseInt(banzukeDate.slice(4) - 1));
 	const divisions = ["Makuuchi", "Juryo", "Makushita", "Sandanme", "Jonidan", "Jonokuchi"];
@@ -36,91 +36,28 @@ window.onload = function () {
 		"Aonishiki",
 		"Yamada"
 		];
-	const rankDebutRikishi = [
-		"Gonoyama",
-		"Atamifuji",
-		"Tohakuryu",
-		"Churanoumi",
-		"Roga",
-		"Kitanowaka",
-		"Shimazuumi",
-		"Onosato",
-		"Shishi",
-		"Tokihayate",
-		"Takahashi",
-		"Tenshoho",
-		"Hitoshi",
-		"Yuma",
-		"Takerufuji",
-		"Oshoumi",
-		"Kitadaichi",
-		"Kototebakari",
-		"Otsuji",
-		"Kayo",
-		"Asahakuryu",
-		"Mudoho",
-		"Onokatsu",
-		"Daiseizan",
-		"Hokutomaru",
-		"Wakanosho",
-		"Hanafusa",
-		"Kotokenryu",
-		"Tanji",
-		"Wakaikari",
-		"Kotakiyama",
-		"Asashinjo",
-		"Satorufuji",
-		"Kenshin",
-		"Gonoumi",
-		"Haruyama",
-		"Murayama",
-		"Kotosato",
-		"Kenyu",
-		"Chiyoshishi",
-		"Kobayashi",
-		"Chiyoresshi",
-		"Anosho",
-		"Sekizuka",
-		"Tatsuosho",
-		"Higonomaru",
-		"Suyama",
-		"Chiyoyamato",
-		"Kanazawa",
-		"Agora",
-		"Kitanosho",
-		"Kassho",
-		"Zuitenryu",
-		"Kuwae",
-		"Taniguchi",
-		"Asasorai",
-		"Ogitora",
-		"Fujiyuho",
-		"Minorufuji",
-		"Daishimatsu",
-		"Ryuji",
-		"Fujiso",
-		"Keiga",
-		"Oatari",
-		"Shiroma",
-		"Tamatensho",
-		"Tsukioka",
-		"Shokeima",
-		"Shimabukuro",
-		"Najima",
-		"Kotomunakata",
-		"Daitengu",
-		"Itoga",
-		"Togyokuko",
-		"Takatairiku",
-		"Takeuchi",
-		"Kotohanashiro",
-		"Sachinoyama",
-		"Katsunishiki",
-		"Asasakurai",
-		"Aonishiki",
-		"Yamada"
-		]
+	var heyaLocal = window.localStorage.getItem("heyaRikishi");
 
+	if (heyaLocal == null || JSON.parse(heyaLocal).banzuke != banzukeDate) {
+		var resp = await fetch("https://www.sumo-api.com/api/rikishis", {
+		    method: "GET"
+		});
+		var respJson = await resp.json();
+        var riki = respJson.records;
+		var heya = _.groupBy(riki, "heya");
+		var heyaShikona = _.map(heya, riki => _.pluck(riki, "shikonaEn"));
+
+		for (var i = 0; i < heyaShikona.length; i++) {
+		    for (var j = 0; j < heyaShikona[i].length; j++) {
+			    if (heyaShikona[i][j].includes(' ')) 
+			    	heyaShikona[i][j] = heyaShikona[i][j].split(' ')[0];
+			}
+		}
+		for (const name in heya) 
+		    heya[name] = heyaShikona[Object.keys(heya).indexOf(name)];
+		heya.banzuke = banzukeDate;
+		window.localStorage.setItem("heyaRikishi", JSON.stringify(heya));
+	}
 	for (var i = 0; i < 6; i++) {
 		var banzukeTable = document.createElement("table"), 
 			tableHeader = document.createElement("thead"), 
@@ -137,7 +74,6 @@ window.onload = function () {
 		document.getElementById("banzukeContainer").appendChild(banzukeTable);
 	}
 	createMakuuchiBanzuke(addClickFunction);
-
 	document.getElementById("closeButton").addEventListener("click", function() {
 		document.getElementById("matchesBox").classList.add("hidden");
 		document.getElementById("matchesBox").close();
@@ -154,34 +90,30 @@ window.onload = function () {
 		async function showOpponents(event) {
 			var allRadio = document.getElementsByName("rs");
 			var prevClicked = document.querySelectorAll(".selected");
-			
-			for (var i = 0; i < allRadio.length; i++) {
-				allRadio[i].setAttribute("disabled", "true");
-			}
-			var prevOpponents = document.querySelectorAll(".met");
-			var nonOpponents = document.querySelectorAll(".notMet");
 			var filledH2hCell = document.querySelectorAll(".filled");
+			var sameHeya = document.querySelectorAll(".sameHeya");
+			var prevOpponents = document.querySelectorAll(".met");
 			
+			for (var i = 0; i < allRadio.length; i++) 
+				allRadio[i].setAttribute("disabled", "true");
 			if (typeof(prevClicked[0]) != "undefined" && prevClicked[0] != null) {
 				if (event.target != prevClicked[0].previousSibling) 
 					prevClicked[0].classList.remove("selected");
 				if (typeof(prevOpponents[0]) != "undefined" && prevOpponents[0] != null) {
 					for (var j = 0; j < prevOpponents.length; j++) {
-						prevOpponents[j].classList.remove("met");
+						prevOpponents[j].removeAttribute("class");
 						prevOpponents[j].removeAttribute("style");
 					}
 				}
-				if (typeof(nonOpponents[0]) != "undefined" && nonOpponents[0] != null) {
-					for (var j = 0; j < nonOpponents.length; j++) 
-						nonOpponents[j].classList.remove("notMet");
-				}
 				if (typeof(filledH2hCell[0]) != "undefined" && filledH2hCell[0] != null) {
 					for (var j = 0; j < filledH2hCell.length; j++) {
-						filledH2hCell[j].classList.remove("filled");
-						if (filledH2hCell[j].classList.contains("hasH2h")) 
-							filledH2hCell[j].classList.remove("hasH2h");
+						filledH2hCell[j].removeAttribute("class");
 						filledH2hCell[j].innerText = "";
 					}
+				}
+				if (typeof(sameHeya[0]) != "undefined" && sameHeya[0] != null) {
+					for (var j = 0; j < sameHeya.length; j++) 
+						sameHeya[j].classList.remove("sameHeya");
 				}
 			}
 			if (!event.target.nextSibling.classList.contains("selected")) {
@@ -192,12 +124,14 @@ window.onload = function () {
 				var rsArray = [];
 				var thisIndex;
 				var selectedRikishiId;
+				var selectedRikishiHeya;
 				var selectedH2h;
 				var rikishiResponse = await fetch("https://www.sumo-api.com/api/rikishi/" + event.target.value + "?intai=true");
 				var rikishiData = await rikishiResponse.json();
 				
 				matchInfo = [];
 				selectedRikishiId = rikishiData.sumodbId;
+				selectedRikishiHeya = rikishiData.heya;
 				if (event.target.id.slice(-1) == 'E') 
 					selectedH2h = event.target.parentNode.previousSibling;
 				else 
@@ -223,19 +157,16 @@ window.onload = function () {
 						div = 1;
 					else 
 						div = 0;
-				}
-				else 
+				} else 
 					div = divNum[div];
-				var rikishiTable = banzukeTable[div],
-					rankNum, 
+				var rankNum, 
 					range = [0, 0], 
 					rangeLength;
 
 				if (div < 2) {
 					rankNum = parseInt(event.target.id.slice(1).slice(0, -1));
 					aiteRadio = $("#banzuke" + divisions[div]).find($("input"));
-				}
-				else {
+				} else {
 					rankNum = parseInt(event.target.id.slice(2).slice(0, -1));
 					range = [rankNum - 10, rankNum + 10];
 					if (range[0] < 1) 
@@ -277,6 +208,7 @@ window.onload = function () {
 				});
 				var matchup = await response.json();
 				var keys = Object.keys(matchup);
+				var heyas = JSON.parse(window.localStorage.getItem("heyaRikishi"));
 				
 				for (var i = 0; i < keys.length; i++) {
 					var aiteId = keys[i].split('-')[1];
@@ -285,11 +217,12 @@ window.onload = function () {
 					var recordCell;
 					var recordText = document.createElement("span");
 
-					//console.log(aiteCell)
 					if (aiteButton.id.slice(-1) == 'E') 
 						recordCell = aiteButton.parentNode.previousSibling;
 					else 
 						recordCell = aiteButton.parentNode.nextSibling;
+					if (heyas[selectedRikishiHeya] != undefined && heyas[selectedRikishiHeya].includes(aiteButton.nextSibling.innerText)) 
+						aiteButton.nextSibling.classList.add("sameHeya");
 					if (matchup[keys[i]].matches != null) {
 						var wins = 0, fusenWins = 0, losses = 0, fusenLosses = 0, playoffWin = 0, playoffLoss = 0;
 						var match = matchup[keys[i]].matches;
@@ -330,8 +263,7 @@ window.onload = function () {
 										fusenWins++;
 									if (match[j].day > 15) 
 										playoffWin++;
-								}
-								else {
+								} else {
 									losses++;
 									if (match[j].kimarite == "fusen") 
 										fusenLosses++;
@@ -362,12 +294,10 @@ window.onload = function () {
 								var rikishi2Link = document.createElement("a");
 								var aiteCell;
 
-								if (this.parentNode.nextSibling == null) {
+								if (this.parentNode.nextSibling == null) 
 									aiteCell = this.parentNode.previousSibling;
-								}
-								else {
+								else 
 									aiteCell = this.parentNode.nextSibling;
-								}
 								id = aiteCell.children[0].value;
 								rikishi1Link.innerText = document.getElementsByClassName("selected")[0].innerText;
 								rikishi1Link.href = document.getElementById("sumoRefLink").href;
@@ -387,16 +317,15 @@ window.onload = function () {
 								for (var j = 0; j < matches.length; j++) {
 									var row = document.createElement("tr");
 									var links = [{}, {}, {}, {}];
-									var shape = matches[j].kimarite == "fusen" ? " ◼": " ●";
 									var kimariteCell = document.createElement("td");
 
 									links[0].text = matches[j].basho.slice(0, 4) + '.' + matches[j].basho.slice(4);
 									links[0].url = "https://sumodb.sumogames.de/Banzuke.aspx?b=" + matches[j].basho + '#' + matches[j].division;
 									links[1].text = "Day " + matches[j].day;
 									links[1].url = "https://sumodb.sumogames.de/Results.aspx?b=" + matches[j].basho + "&d=" + matches[j].day;
-									links[2].text = matches[j].rikishi;
+									links[2].text = matches[j].rikishi.split(' ')[1];
 									links[2].url = "https://sumodb.sumogames.de/Rikishi.aspx?shikona=" + matches[j].rikishi.split(' ')[1] + "&b=" + matches[j].basho;
-									links[3].text = matches[j].aite;
+									links[3].text = matches[j].aite.split(' ')[1];
 									links[3].url = "https://sumodb.sumogames.de/Rikishi.aspx?shikona=" + matches[j].aite.split(' ')[1] + "&b=" + matches[j].basho;
 									kimariteCell.innerText = matches[j].kimarite;
 									for (var k = 0; k < 4; k++) {
@@ -406,29 +335,57 @@ window.onload = function () {
 										link.innerText = links[k].text;
 										link.href = links[k].url;
 										link.target = "_blank";
-										cell.appendChild(link);
 										if (k == 2) {
-											var hoshi = document.createElement("span");
+											var rank = document.createElement("span");
+											var image = document.createElement("img");
+											var imgSrc;
 											
-											hoshi.innerText = shape;
-											if (matches[j].won) 
-												hoshi.className = "shiro";
-											else 
-												hoshi.className = "kuro";
-											cell.appendChild(hoshi);
-											cell.className = "rCell";
+											if (matches[j].won) {
+												if (matches[j].kimarite == "fusen") 
+													imgSrc = "fusensho.png";
+												else 
+													imgSrc = "shiro.png";
+											} else {
+												if (matches[j].kimarite == "fusen") 
+													imgSrc = "fusenpai.png";
+												else 
+													imgSrc = "kuro.png";
+											}
+											image.src = imgSrc;
+											rank.innerText = matches[j].aite.split(' ')[0];
+											cell.className = "matchResult";
+											cell.append(rank);
+											cell.append("\u00A0");
+											cell.appendChild(link);
+											cell.append("\u00A0");
+											cell.appendChild(image);
 										}
 										else if (k == 3) {
-											var hoshi = document.createElement("span");
+											var rank = document.createElement("span");
+											var image = document.createElement("img");
+											var imgSrc;
 											
-											hoshi.innerText = shape;
-											if (!matches[j].won) 
-												hoshi.className = "shiro";
-											else 
-												hoshi.className = "kuro";
-											cell.appendChild(hoshi);
-											cell.className = "rCell";
-										}
+											if (matches[j].won) {
+												if (matches[j].kimarite == "fusen") 
+													imgSrc = "fusenpai.png";
+												else 
+													imgSrc = "kuro.png";
+											} else {
+												if (matches[j].kimarite == "fusen") 
+													imgSrc = "fusensho.png";
+												else 
+													imgSrc = "shiro.png";
+											}
+											image.src = imgSrc;
+											rank.innerText = matches[j].aite.split(' ')[0];
+											cell.className = "matchResult";
+											cell.append(rank);
+											cell.append("\u00A0");
+											cell.appendChild(link);
+											cell.append("\u00A0");
+											cell.appendChild(image);
+										} else 
+											cell.appendChild(link);
 										row.appendChild(cell);
 									}
 									row.appendChild(kimariteCell);
@@ -475,8 +432,7 @@ window.onload = function () {
 										finalColor = "#F6C6C1";
 									if (sum < 2) 
 										finalColor = "#f5d0d0";
-								}
-								else {
+								} else {
 									if (ratio <= 13) 
 										finalColor = "#CBE693";
 									else if (ratio >= 19) 
@@ -497,16 +453,12 @@ window.onload = function () {
 							}
 							return finalColor;
 						}
-					}
-					else {
+					} else 
 						record = "0-0";
-						//radioButton.nextSibling.classList.add("notMet");
-					}
 					recordText.innerText = record;
 					recordCell.appendChild(recordText);
 					recordCell.classList.add("filled");
 				}
-				console.log(matchInfo);
 			}
 			else 
 				event.target.nextSibling.classList.remove("selected");
@@ -537,8 +489,7 @@ window.onload = function () {
 		 		if (eastRank[0] != westRank[0]) {
 			 		if (hierarchy[eastRank[0]] > hierarchy[westRank[0]]) {
 			 			rikishi.west.splice(i, 0, {});
-			 		}
-			 		else {
+			 		} else {
 			 			rikishi.east.splice(i, 0, {});
 			 			eastRank[0] = westRank[0];
 			 			eastRank[1] = westRank[1];
@@ -579,20 +530,13 @@ window.onload = function () {
 		 			label.innerText = side == 'E' ? rikishi.east[i].shikonaEn : rikishi.west[i].shikonaEn;
 		 			if (divDebutRikishi.includes(label.innerText)) 
 		 				label.classList.add("divDeb");
-		 			else if (rankDebutRikishi.includes(label.innerText)) {
-		 				if (hierarchy[eastRank[0]] > 0) 
-			 				label.classList.add("divDeb");
-			 			//else
-			 			//	label.classList.add("rankDeb");
-		 			}
 		 			label.setAttribute("for", divShort + rankNum + side);
 		 			cell.appendChild(radioButton);
 		 			cell.appendChild(label);
 		 			if (side == 'E') {
 		 				row.appendChild(document.createElement("td"));
 				 		row.appendChild(cell);
-		 			}
-		 			else {
+		 			} else {
 		 				row.appendChild(cell);
 				 		row.appendChild(document.createElement("td"));
 		 			}

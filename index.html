@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=0.7">
 	<script type="text/javascript" src="script.js"></script>
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/underscore@1.13.6/underscore-umd-min.js"></script>
 	<title>H2H records banzuke</title>
 </head>
 <body>
@@ -14,7 +15,7 @@
 			<span id="credit">Powered by <a href="https://www.sumo-api.com/" target="_blank">The Sumo API</a></span>
 		</h1>
 		<ul>
-			<li>Click on a rikishi to see his win-loss records displayed alongside the rikishi he could face during the basho. Based on the records, the opponents are colored</li>
+			<li>Click on a rikishi to see his win-loss records displayed alongside the rikishi he could face during the basho. Based on the records, the opponents are colored. Rikishi from the same heya are striped</li>
 			<li>Then you can click on a record number and take a look at all of the matchups</li>
 		</ul>
 	</header>
@@ -146,16 +147,8 @@ label:hover {
   	text-shadow: 1px 1px #00000082;
 }
 
-.met {
-}
-
-.notMet {
-	background: lightgray;
-}
-
 .filled {
 	text-align: center;
-	cursor: default;
 }
 
 .filled span {
@@ -186,15 +179,7 @@ dialog {
   	border-bottom: 25px solid transparent;
   	box-sizing: border-box;
   	border-radius: 10px;
-}
-
-.shiro, .kuro {
-	font-size: large;
-}
-
-.shiro {
-	color: white;
-	text-shadow: 1px 1px #000, -1px 1px #000, -1px -1px #000, 1px -1px #000;
+  	max-width: 99%;
 }
 
 a:hover {
@@ -211,10 +196,12 @@ a {
 	background: #e3ffe3;
 	border-width: 3px;
 	border-color: #262626;
+	min-width: max-content;
 }
 
 #matchesTable td {
   	border-color: #000000bf;
+  	padding: 4px 5px;
 }
 
 #tableHead {
@@ -224,10 +211,10 @@ a {
   	text-align: center;
   	font-size: 15px;
   	background: white;
+  	border-radius: 0 0 5px 0;
 }
 
 #closeButton {
-	/*float: right;*/
 	position: absolute;
   	right: 5px;
 }
@@ -240,16 +227,23 @@ a {
 	display: none;
 }
 
-.rCell {
+.matchResult {
 	text-align: justify;
-	line-height: 5pt;
-  	padding: 8px 4px 0px 4px;
+  	line-height: 0;
 }
 
-.rCell::after {
-	content: "";
-	width: 100%;
-	display: inline-block;
+.matchResult::after {
+  content: '';
+  display: inline-block;
+  width: 100%;
+}
+
+.matchResult img {
+  width: 14px;
+}
+
+.sameHeya {
+	background-image: url(unallowed.png) !important;
 }
 
 </style>
