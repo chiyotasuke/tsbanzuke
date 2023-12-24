@@ -352,7 +352,7 @@ window.onload = async function () {
 													imgSrc = "kuro.png";
 											}
 											image.src = imgSrc;
-											rank.innerText = matches[j].aite.split(' ')[0];
+											rank.innerText = matches[j].rikishi.split(' ')[0];
 											cell.className = "matchResult";
 											cell.append(rank);
 											cell.append("\u00A0");
