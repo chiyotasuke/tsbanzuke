@@ -108,14 +108,14 @@ thead th {
 .sanyakuRow > * {
 	background: #e0e09a;
 }
-
+/*
 #sumoRefLink {
 	text-decoration: none;
   	border-radius: 5px;
   	width: 30px;
   	display: inline-block;
 }
-
+*/
 label {
 	width: 100%;
   	display: inline-block;
@@ -151,17 +151,21 @@ label:hover {
 	text-align: center;
 }
 
-.filled span {
-	font-size: 13px;
-	color: dimgray;
+.h2hNone {
+	font-size: 13px !important;
+  	color: dimgray !important;
+  	cursor: default !important;
 }
 
-.hasH2h span {
+.h2h {
 	color: darkblue;
 	font-size: 14px;
+	display: table-cell;
+  	text-align: center;
+  	width: 100%;
 }
 
-.hasH2h span:hover {
+.h2h:hover {
 	cursor: pointer;
 	text-decoration: underline;
 }
@@ -244,6 +248,16 @@ a {
 
 .sameHeya {
 	background-image: url(unallowed.png) !important;
+}
+
+.sideCell > :first-child {
+  padding-right: 10px;
+}
+
+.dbLink {
+  display: table-cell;
+  color: lightblue;
+  text-shadow: 1px 0 darkblue;
 }
 
 </style>

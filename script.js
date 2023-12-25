@@ -1,7 +1,6 @@
 
 window.onload = async function () {
 	const banzukeDate = "202401"; // 196909 until now for sekitori; from 198901 all lower division matchups are complete
-	const bashoDate = new Date(parseInt(banzukeDate.slice(0, 4)), parseInt(banzukeDate.slice(4) - 1));
 	const divisions = ["Makuuchi", "Juryo", "Makushita", "Sandanme", "Jonidan", "Jonokuchi"];
 	const divAbbr = {"Makuuchi": 'M', "Juryo": 'J', "Makushita": "Ms", "Sandanme": "Sd", "Jonidan": "Jd", "Jonokuchi": "Jk", "Mae-zumo": "Mz"};
 	const rankAbbr = {"Yokozuna": 'Y', "Ozeki": 'O', "Sekiwake": 'S', "Komusubi": 'K', "Maegashira": 'M', "Juryo": 'J', 
@@ -10,7 +9,35 @@ window.onload = async function () {
 	var fetching = false;
 	var divRankQty = [];
 	var matchInfo = [];
-	const divDebutRikishi = [];
+	const divDebutRikishi = [
+		"Ura", 
+		"Onosato", 
+		"Shimazuumi", 
+		"Takerufuji", 
+		"Oshoumi", 
+		"Oka", 
+		"Nishida", 
+		"Nagamura", 
+		"Anosho", 
+		"Oyamada", 
+		"Shiroma", 
+		"Soma", 
+		"Dairinzan", 
+		"Kazeyuki", 
+		"Aonishiki", 
+		"Chiyorozan", 
+		"Kotohanashiro", 
+		"Yamada", 
+		"Kyokukaiyu", 
+		"Anhibiki", 
+		"Anryukai", 
+		"Daishiyama"
+		];
+	var intaiRikishi = [
+		"Azumaryu", 
+		"Rao", 
+		"Shinzan"
+		];
 	var heyaLocal = window.localStorage.getItem("heyaRikishi");
 
 	if (heyaLocal == null || JSON.parse(heyaLocal).banzuke != banzukeDate) {
@@ -65,7 +92,7 @@ window.onload = async function () {
 		async function showOpponents(event) {
 			var allRadio = document.getElementsByName("rs");
 			var prevClicked = document.querySelectorAll(".selected");
-			var filledH2hCell = document.querySelectorAll(".filled");
+			var h2hText = document.getElementsByClassName("h2h");
 			var sameHeya = document.querySelectorAll(".sameHeya");
 			var prevOpponents = document.querySelectorAll(".met");
 			
@@ -80,11 +107,9 @@ window.onload = async function () {
 						prevOpponents[j].removeAttribute("style");
 					}
 				}
-				if (typeof(filledH2hCell[0]) != "undefined" && filledH2hCell[0] != null) {
-					for (var j = 0; j < filledH2hCell.length; j++) {
-						filledH2hCell[j].removeAttribute("class");
-						filledH2hCell[j].innerText = "";
-					}
+				if (typeof(h2hText[0]) != "undefined" && h2hText[0] != null) {
+					while (h2hText.length) 
+						h2hText[0].remove();
 				}
 				if (typeof(sameHeya[0]) != "undefined" && sameHeya[0] != null) {
 					for (var j = 0; j < sameHeya.length; j++) 
@@ -100,30 +125,17 @@ window.onload = async function () {
 				var thisIndex;
 				var selectedRikishiId;
 				var selectedRikishiHeya;
-				var selectedH2h;
 				var rikishiResponse = await fetch("https://www.sumo-api.com/api/rikishi/" + event.target.value + "?intai=true");
 				var rikishiData = await rikishiResponse.json();
 				
 				matchInfo = [];
 				selectedRikishiId = rikishiData.sumodbId;
 				selectedRikishiHeya = rikishiData.heya;
-				if (event.target.id.slice(-1) == 'E') 
-					selectedH2h = event.target.parentNode.previousSibling;
-				else 
-					selectedH2h = event.target.parentNode.nextSibling;
-				if (selectedH2h.innerHTML == "") {
-					var sumoRefLink = document.createElement("a");
+				if (event.target.id.slice(-1) == 'W') {
+					var dummyH2h = document.createElement("span");
 
-					sumoRefLink.id = "sumoRefLink";
-					if (typeof(selectedRikishiId) == "undefined") 
-						sumoRefLink.href = "https://sumodb.sumogames.de/Rikishi.aspx?shikona=" + event.target.nextSibling.innerText + "&intai=999999";
-					else 
-						sumoRefLink.href = "https://sumodb.sumogames.de/Rikishi.aspx?r=" + selectedRikishiId;
-					sumoRefLink.target = "_blank";
-					sumoRefLink.innerText = 'ⓘ';
-					sumoRefLink.title = "Open rikishi information page";
-					selectedH2h.appendChild(sumoRefLink);
-					selectedH2h.classList.add("filled");
+					dummyH2h.className = "h2h h2hNone";
+					event.target.parentNode.nextSibling.prepend(dummyH2h);
 				}
 				event.target.nextSibling.classList.add("selected");
 				div = event.target.id.slice(0, 2);
@@ -198,15 +210,14 @@ window.onload = async function () {
 						recordCell = aiteButton.parentNode.nextSibling;
 					if (heyas[selectedRikishiHeya] != undefined && heyas[selectedRikishiHeya].includes(aiteButton.nextSibling.innerText)) 
 						aiteButton.nextSibling.classList.add("sameHeya");
+					recordText.classList.add("h2h");
 					if (matchup[keys[i]].matches != null) {
 						var wins = 0, fusenWins = 0, losses = 0, fusenLosses = 0, playoffWin = 0, playoffLoss = 0;
 						var match = matchup[keys[i]].matches;
 
 						matchInfo.push({aite: aiteId, matches: []});
 						for (var j = 0; j < match.length; j++) {
-							var matchDate = new Date(parseInt(match[j].bashoId.slice(0, 4)), parseInt(match[j].bashoId.slice(4)) - 1);
-							
-							if (matchDate < bashoDate) {
+							if (match[j].bashoId != banzukeDate) {
 								var rikishiWon = true, rikishiText = [], 
 									east = match[j].eastRank.split(' '), west = match[j].westRank.split(' ');
 
@@ -258,7 +269,6 @@ window.onload = async function () {
 						if (playoffLoss > 0) 
 							record += "[+" + playoffLoss + ']';
 						if (wins > 0 || losses > 0) {
-							recordCell.classList.add("hasH2h");
 							aiteButton.nextSibling.classList.add("met");
 							aiteButton.nextSibling.style.background = generateColor(wins - fusenWins, losses - fusenLosses);
 							recordText.addEventListener("click", function() {
@@ -267,18 +277,28 @@ window.onload = async function () {
 								var headerText = document.createElement("span");
 								var rikishi1Link = document.createElement("a");
 								var rikishi2Link = document.createElement("a");
+								var selected = document.getElementsByClassName("selected")[0];
+								var rikishi1LinkUrl;
+								var rikishi2LinkUrl;
 								var aiteCell;
 
-								if (this.parentNode.nextSibling == null) 
-									aiteCell = this.parentNode.previousSibling;
+								if (selected.getAttribute("for").slice(-1) == 'E') 
+									rikishi1LinkUrl = selected.parentNode.previousSibling.children[0].href;
 								else 
+									rikishi1LinkUrl = selected.parentNode.nextSibling.children[1].href;
+								if (this.parentNode.nextSibling == null) {
+									rikishi2LinkUrl = this.nextSibling.href;
+									aiteCell = this.parentNode.previousSibling;
+								}
+								else {
+									rikishi2LinkUrl = this.prevOpponents.href;
 									aiteCell = this.parentNode.nextSibling;
+								}
 								id = aiteCell.children[0].value;
-								rikishi1Link.innerText = document.getElementsByClassName("selected")[0].innerText;
-								rikishi1Link.href = document.getElementById("sumoRefLink").href;
+								rikishi1Link.innerText = selected.innerText;
+								rikishi1Link.href = rikishi1LinkUrl;
 								rikishi2Link.innerText = aiteCell.children[1].innerText;
-								rikishi2Link.href = "https://sumodb.sumogames.de/Rikishi.aspx?shikona=" + 
-													aiteCell.children[1].innerText + "&b=" + banzukeDate;
+								rikishi2Link.href = rikishi2LinkUrl;
 								rikishi1Link.target = "_blank";
 								rikishi2Link.target = "_blank";
 								headerText.id = "h2hText";
@@ -428,11 +448,16 @@ window.onload = async function () {
 							}
 							return finalColor;
 						}
-					} else 
+					} else {
 						record = "0-0";
+						recordText.classList.add("h2hNone");
+					}
 					recordText.innerText = record;
-					recordCell.appendChild(recordText);
-					recordCell.classList.add("filled");
+					if (aiteButton.id.slice(-1) == 'E') 
+						recordCell.appendChild(recordText);
+					else 
+						recordCell.prepend(recordText);
+					//recordCell.classList.add("filled");
 				}
 			}
 			else 
@@ -495,7 +520,10 @@ window.onload = async function () {
 		 			var radioButton = document.createElement("input"), 
 		 				label = document.createElement("label"), 
 		 				cell = document.createElement("td"), 
-		 				rankNum = eastRank[1];
+		 				sumoRefLink = document.createElement('a'), 
+		 				rankNum = eastRank[1], 
+		 				h2hCell = document.createElement("td"), 
+		 				dbId;
 
 		 			divShort = rankAbbr[eastRank[0]];
 		 			radioButton.id = divShort + rankNum + side;
@@ -503,17 +531,34 @@ window.onload = async function () {
 		 			radioButton.name = "rs";
 		 			radioButton.value = side == 'E' ? rikishi.east[i].rikishiID : rikishi.west[i].rikishiID;
 		 			label.innerText = side == 'E' ? rikishi.east[i].shikonaEn : rikishi.west[i].shikonaEn;
+		 			switch (label.innerText) {
+		 			case "Souga": dbId = 12504; break;
+		 			case "Soga": dbId = 12759; break;
+		 			case "Toukiryu": dbId = 12151; break;
+		 			default: break;
+		 			}
+		 			if (dbId == undefined) 
+						sumoRefLink.href = "https://sumodb.sumogames.de/Rikishi.aspx?shikona=" + label.innerText + "&b=" + banzukeDate;
+					else 
+						sumoRefLink.href = "https://sumodb.sumogames.de/Rikishi.aspx?r=" + dbId;
+					sumoRefLink.target = "_blank";
+					sumoRefLink.innerText = 'ⓘ';
+					sumoRefLink.className = "dbLink";
+					//sumoRefLink.title = "Open rikishi information page";
 		 			if (divDebutRikishi.includes(label.innerText)) 
 		 				label.classList.add("divDeb");
 		 			label.setAttribute("for", divShort + rankNum + side);
 		 			cell.appendChild(radioButton);
 		 			cell.appendChild(label);
+		 			h2hCell.className = "sideCell";
+		 			h2hCell.appendChild(sumoRefLink);
 		 			if (side == 'E') {
-		 				row.appendChild(document.createElement("td"));
+		 				row.appendChild(h2hCell);
 				 		row.appendChild(cell);
 		 			} else {
+		 				//sumoRefLink.classList.add("west");
 		 				row.appendChild(cell);
-				 		row.appendChild(document.createElement("td"));
+				 		row.appendChild(h2hCell);
 		 			}
 		 		}
 		 		function createBlank() {
