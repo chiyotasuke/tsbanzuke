@@ -291,7 +291,7 @@ window.onload = async function () {
 									aiteCell = this.parentNode.previousSibling;
 								}
 								else {
-									rikishi2LinkUrl = this.prevOpponents.href;
+									rikishi2LinkUrl = this.previousSibling.href;
 									aiteCell = this.parentNode.nextSibling;
 								}
 								id = aiteCell.children[0].value;
