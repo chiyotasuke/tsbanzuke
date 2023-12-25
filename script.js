@@ -1,6 +1,6 @@
 
 window.onload = async function () {
-	const banzukeDate = "202311"; // 196909 until now for sekitori; from 198901 all lower division matchups are complete
+	const banzukeDate = "202401"; // 196909 until now for sekitori; from 198901 all lower division matchups are complete
 	const bashoDate = new Date(parseInt(banzukeDate.slice(0, 4)), parseInt(banzukeDate.slice(4) - 1));
 	const divisions = ["Makuuchi", "Juryo", "Makushita", "Sandanme", "Jonidan", "Jonokuchi"];
 	const divAbbr = {"Makuuchi": 'M', "Juryo": 'J', "Makushita": "Ms", "Sandanme": "Sd", "Jonidan": "Jd", "Jonokuchi": "Jk", "Mae-zumo": "Mz"};
@@ -10,32 +10,7 @@ window.onload = async function () {
 	var fetching = false;
 	var divRankQty = [];
 	var matchInfo = [];
-	const divDebutRikishi = [
-		"Tohakuryu",
-		"Churanoumi",
-		"Roga",
-		"Kitanowaka",
-		"Hitoshi",
-		"Onokatsu",
-		"Asashinjo",
-		"Satorufuji",
-		"Kenshin",
-		"Gonoumi",
-		"Haruyama",
-		"Anosho",
-		"Higonomaru",
-		"Kitanosho",
-		"Zuitenryu",
-		"Kuwae",
-		"Taniguchi",
-		"Asasorai",
-		"Fujiyuho",
-		"Shiroma",
-		"Itoga",
-		"Togyokuko",
-		"Aonishiki",
-		"Yamada"
-		];
+	const divDebutRikishi = [];
 	var heyaLocal = window.localStorage.getItem("heyaRikishi");
 
 	if (heyaLocal == null || JSON.parse(heyaLocal).banzuke != banzukeDate) {
