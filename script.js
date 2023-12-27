@@ -150,33 +150,39 @@ window.onload = async function () {
 					range = [0, 0], 
 					rangeLength;
 
+				aiteRadio = $("#banzuke" + divisions[div]).find($("input"));
 				if (div < 2) {
 					rankNum = parseInt(event.target.id.slice(1).slice(0, -1));
-					aiteRadio = $("#banzuke" + divisions[div]).find($("input"));
 				} else {
 					rankNum = parseInt(event.target.id.slice(2).slice(0, -1));
+					/*
 					range = [rankNum - 10, rankNum + 10];
-					if (range[0] < 1) 
-						range[0] = 1;
-					if (range[1] > divRankQty[div]) 
-						range[1] = divRankQty[div];
 					rangeLength = range[1]-range[0];
 					for (var i = range[0]; i <= range[1]; i++) {
 						aiteRadio.push(document.querySelector('#' + divNameShort[div] + i + 'E'));
 						if ($('#' + divNameShort[div] + i + 'W').length > 0) 
 							aiteRadio.push(document.querySelector('#' + divNameShort[div] + i + 'W'));
 					}
+					*/
 				}
-				if (div > 0 && rankNum < 8) {
-					range = [divRankQty[div-1] - Math.abs(rankNum - 7), divRankQty[div-1]];
+				if ((div > 2 && rankNum < 21) || (div > 0 && div < 3 && rankNum < 9)) {
+					if (div < 3 && rankNum < 9)
+						range[0] = divRankQty[div-1] - Math.abs(rankNum - 8);
+					else if (div > 2) 
+						range[0] = divRankQty[div-1] - Math.abs(rankNum - 20);
+					range[1] = divRankQty[div-1];
 					for (var i = range[0]; i <= range[1]; i++) {
 						aiteRadio.push(document.querySelector('#' + divNameShort[(div-1)] + i + 'E'));
 						if ($('#' + divNameShort[(div-1)] + i + 'W').length > 0) 
 							aiteRadio.push(document.querySelector('#' + divNameShort[(div-1)] + i + 'W'));
 					}
 				}
-				else if (div < 5 && rankNum > divRankQty[div] - 7) {
-					range = [1, rankNum - divRankQty[div] + 7];
+				if ((div < 5 && div != 1 && rankNum > divRankQty[div] - 20) || (div == 1 && rankNum > divRankQty[div] - 8)) {
+					range[0] = 1;
+					if (div < 2 && rankNum > divRankQty[div] - 8)
+						range[1] = rankNum - divRankQty[div] + 8;
+					else if (div > 1) 
+						range[1] = rankNum - divRankQty[div] + 20;
 					for (var i = range[0]; i <= range[1]; i++) {
 						aiteRadio.push(document.querySelector('#' + divNameShort[(div+1)] + i + 'E'));
 						if ($('#' + divNameShort[(div+1)] + i + 'W').length > 0) 
@@ -184,7 +190,7 @@ window.onload = async function () {
 					}
 				}
 				for (var i = 0; i < aiteRadio.length; i++) {
-					if (event.target.value != aiteRadio[i].value) {
+					if (aiteRadio[i] != null && event.target.value != aiteRadio[i].value) {
 						requestBody.push({ "ids": [parseInt(event.target.value), parseInt(aiteRadio[i].value)], 
 										   "key": event.target.value + '-' + aiteRadio[i].value })
 					}
