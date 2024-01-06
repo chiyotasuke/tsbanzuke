@@ -15,10 +15,11 @@
 			<span id="credit">Powered by <a href="https://www.sumo-api.com/" target="_blank">The Sumo API</a></span>
 		</h1>
 		<ul>
-			<li>Click on a rikishi to see his win-loss records displayed alongside the rikishi he could face during the basho. Based on the records, the opponents are colored. Rikishi of the same heya are striped</li>
+			<li>Click on a rikishi to see his win-loss records displayed alongside <u>all the rikishi on the banzuke</u>. Based on the records, the opponents are colored. Rikishi of the same heya are striped</li>
 			<li>Then you can click on a record number and take a look at all of the matchups</li>
 		</ul>
 	</header>
+	<div class="hidden" id="selectedRikishiPanel"></div>
 	<h2></h2>
 	<div id="banzukeContainer"></div>
 	<dialog id="matchesBox" class="hidden">
@@ -88,8 +89,7 @@ table {
 
 td, th {
 	border: 1px solid #00000082;
-	min-width: 20px;
-	padding: 1px 5px;
+  	padding: 2px;
 }
 
 td {
@@ -98,6 +98,7 @@ td {
 
 th {
 	font-weight: normal;
+	padding: 2px 5px;
 }
 
 thead th {
@@ -117,28 +118,27 @@ thead th {
 }
 */
 label {
-	width: 100%;
-  	display: inline-block;
+  	width: 100%;
+  	display: table-cell;
   	cursor: pointer;
   	padding: 1px 2px;
-  	margin-left: -4px;
   	border-radius: 3px;
-  	border: 2px outset #51515180;
   	background: white;
   	color: #1a1a1a;
   	text-shadow: 1px 1px #ffffff7d;
+  	outline: 2px outset #0000009c;
 }
 
 label:hover {
-	border: 2px solid blue;
+	outline-color: blue;
 }
 
 .divDeb {
-	border-color: #ff0000bd;
+	outline-color: #800080ba;
 }
 
 .rankDeb {
-	border-color: #ff0000bd #51515180 #ff0000bd #51515180;
+	outline-color: #ff00008f;
 }
 
 .selected {
@@ -160,9 +160,6 @@ label:hover {
 .h2h {
 	color: darkblue;
 	font-size: 14px;
-	display: table-cell;
-  	text-align: center;
-  	width: 100%;
 }
 
 .h2h:hover {
@@ -250,14 +247,29 @@ a {
 	background-image: url(unallowed.png) !important;
 }
 
-.sideCell > :first-child {
-  padding-right: 10px;
+.sideCell {
+  text-align: center;
+  padding: 2px 5px;
 }
 
 .dbLink {
   display: table-cell;
-  color: lightblue;
-  text-shadow: 1px 0 darkblue;
+  padding-left: 6px;
+  padding-right: 3px;
+  color: #373782;
+}
+
+#selectedRikishiPanel {
+  position: sticky;
+  background: linear-gradient(transparent, #0000ffa3 50%);
+  padding: 5px;
+  margin: auto;
+  width: fit-content;
+  color: white;
+  text-shadow: 1px 1px #00000082;
+  border-radius: 0 0 5px 5px;
+  top: 0%;
+  padding-top: 15px;
 }
 
 </style>
