@@ -668,13 +668,16 @@ window.onload = async function () {
 		 			rikishiInfo = riki.find(r => r.id == radioButton.value);
 		 			heya = rikishiInfo.heya != undefined ? rikishiInfo.heya : '-';
 		 			shusshin = rikishiInfo.shusshin != undefined ? rikishiInfo.shusshin.split(',')[0].split('-')[0] : '-';
-		 			birthDate = new Date(Date.parse(rikishiInfo.birthDate));
-		 			birthDate = birthDate.getFullYear() + '.' + (birthDate.getMonth() + 1) + '.' + birthDate.getDate();
-		 			birthDate += " (" + (Math.abs((new Date(Date.now() - Date.parse(rikishiInfo.birthDate))).getUTCFullYear() - 1970)) + " years)";
+		 			if (rikishiInfo.birthDate != undefined) {
+			 			birthDate = new Date(Date.parse(rikishiInfo.birthDate));
+			 			birthDate = birthDate.getFullYear() + '.' + (birthDate.getMonth() + 1) + '.' + birthDate.getDate();
+			 			birthDate += " (" + (Math.abs((new Date(Date.now() - Date.parse(rikishiInfo.birthDate))).getUTCFullYear() - 1970)) + " years)";
+		 			} else 
+		 				birthDate = '-';
 		 			hatsu = rikishiInfo.debut.slice(0, 4) + '.' + rikishiInfo.debut.slice(4);
 		 			hw = rikishiInfo.height != undefined ? rikishiInfo.height + " cm " : " - cm ";
 		 			hw += rikishiInfo.weight != undefined ? rikishiInfo.weight + " kg" : " - kg";
-		 			label.title = "Heya: " + rikishiInfo.heya + "\nShusshin: " + shusshin + "\nBirth date: " + birthDate + "\nDebut: " + hatsu + "\nHW: " + hw;
+		 			label.title = "Heya: " + heya + "\nShusshin: " + shusshin + "\nBirth date: " + birthDate + "\nDebut: " + hatsu + "\nHW: " + hw;
 		 			if (rikishiInfo.weight != undefined) 
 		 			radioButton.setAttribute("data-inf", rikishiInfo.heya);
 		 			label.innerText = side == 'E' ? rikishi.east[i].shikonaEn : rikishi.west[i].shikonaEn;
