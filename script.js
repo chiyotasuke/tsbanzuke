@@ -179,8 +179,8 @@ window.onload = async function () {
 		document.getElementById("matchesBox").classList.add("hidden");
 		document.getElementById("matchesBox").close();
 	});
-
 	document.getElementsByTagName("h2")[0].innerText = bashoName[banzukeDate.slice(4)] + ' ' + banzukeDate.slice(0, 4) + " Banzuke";
+	window.onresize = matchesBoxPosition;
 
 	function addClickFunction() {
 		var cells = document.getElementsByName("rs");
@@ -523,6 +523,7 @@ window.onload = async function () {
 						dialogBox.children[0].prepend(headerText);
 						dialogBox.appendChild(table);
 						dialogBox.scrollTop = dialogBox.scrollHeight;
+						matchesBoxPosition();
 					});
 
 					function generateColor(num1, num2) {
@@ -719,5 +720,15 @@ window.onload = async function () {
 		 	}
 		}
 	 	callback();
+	}
+	function matchesBoxPosition() {
+	    var matchesWidth = document.getElementById("matchesBox").offsetWidth;
+		var tablesWidth = document.getElementById("banzukeContainer").offsetWidth; 
+		var windowWidth = window.innerWidth;
+
+		if (matchesWidth + (tablesWidth/2) < windowWidth/2) 
+			$("#matchesBox").css("margin-left", windowWidth/2 - matchesWidth - (tablesWidth/2) - 10 + "px");
+	    else 
+	    	$("#matchesBox").css("margin-left", '0');
 	}
 }
