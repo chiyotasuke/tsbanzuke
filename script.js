@@ -726,7 +726,7 @@ window.onload = async function () {
 		var tablesWidth = document.getElementById("banzukeContainer").offsetWidth; 
 		var windowWidth = window.innerWidth;
 
-		if (matchesWidth + (tablesWidth/2) < windowWidth/2) 
+		if (matchesWidth + (tablesWidth/2) + 10 < windowWidth/2) 
 			$("#matchesBox").css("margin-left", windowWidth/2 - matchesWidth - (tablesWidth/2) - 10 + "px");
 	    else 
 	    	$("#matchesBox").css("margin-left", '0');
