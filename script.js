@@ -408,8 +408,8 @@ window.onload = async function () {
 						rikishi2Link.innerText = aiteCell.children[1].innerText;
 						rikishi2Link.title = rikishi2Title;
 						rikishi2Link.href = rikishi2LinkUrl;
-						rikishi1Link.target = "_blank";
-						rikishi2Link.target = "_blank";
+						rikishi1Link.target = "dbWin";
+						rikishi2Link.target = "dbWin";
 						headerText.id = "h2hText";
 						headerText.appendChild(rikishi1Link);
 						headerText.innerHTML += " vs. ";
@@ -438,7 +438,7 @@ window.onload = async function () {
 
 								link.innerText = links[k].text;
 								link.href = links[k].url;
-								link.target = "_blank";
+								link.target = "dbWin";
 								if (k == 2) {
 									var rank = document.createElement("span");
 									var image = document.createElement("img");
@@ -690,7 +690,7 @@ window.onload = async function () {
 						sumoRefLink.href = "https://sumodb.sumogames.de/Rikishi.aspx?shikona=" + label.innerText + "&b=" + banzukeDate;
 					else 
 						sumoRefLink.href = "https://sumodb.sumogames.de/Rikishi.aspx?r=" + dbId;
-					sumoRefLink.target = "_blank";
+					sumoRefLink.target = "dbWin";
 					sumoRefLink.innerText = 'ⓘ';
 					sumoRefLink.className = "dbLink";
 					sumoRefLink.title = "Open rikishi information page";
