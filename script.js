@@ -596,6 +596,7 @@ window.onload = async function () {
 			}
 			for (var i = 0; i < allRadio.length; i++) 
 				allRadio[i].removeAttribute("disabled");
+			matchesBoxPosition();
 		}
 	}
 	async function createMakuuchiBanzuke(callback) {
