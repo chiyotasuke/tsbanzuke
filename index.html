@@ -17,6 +17,12 @@
 		<ul>
 			<li>Click on a rikishi to see his win-loss records displayed alongside <u>all the rikishi on the banzuke</u>. Based on the records, the opponents are colored. Rikishi of the same heya are striped</li>
 			<li>Then you can click on a record number and take a look at all of the matchups</li>
+			<div id="legend">
+				<label class="rankDeb legendItem">Rikishi at career high rank</label>
+				<label class="divDeb legendItem">Rikishi at division debut</label>
+				<div class="legendItem"><span class="marking intai">R</span> Retired</div>
+				<div class="legendItem"><span class="marking kyujo">A</span> Absent from Day 1</div>
+			</div>
 		</ul>
 	</header>
 	<div class="hidden" id="selectedRikishiPanel"></div>
@@ -261,6 +267,7 @@ a {
 .sideCell {
   text-align: center;
   padding: 2px 5px;
+  white-space: nowrap;
 }
 
 .dbLink {
@@ -281,6 +288,43 @@ a {
   border-radius: 0 0 5px 5px;
   top: 0%;
   padding-top: 15px;
+}
+
+.marking {
+  width: 15px;
+  display: inline-block;
+  color: white;
+  cursor: default;
+  text-align: center;
+}
+
+.kyujo {
+	background: #ea0000;
+}
+
+.intai {
+  background: #6f6f6f;
+}
+
+.marking + .h2h {
+  	width: calc(100% - 18px);
+	margin-left: 3px;
+}
+
+.h2h:has(+ .marking) {
+  	width: calc(100% - 18px);
+	margin-right: 3px;
+}
+
+#legend {
+	margin-top: 15px;
+}
+
+.legendItem {
+	width: auto;
+	display: inline-block;
+	margin-right: 10px;
+	white-space: nowrap;
 }
 
 </style>

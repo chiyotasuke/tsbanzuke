@@ -135,6 +135,9 @@ window.onload = async function () {
 		"Rao", 
 		"Shinzan"
 		];
+	var kyujoRikishi = [
+		"Enho"
+		]
 	/*
 	var heyaLocal = window.localStorage.getItem("heyaRikishi");
 
@@ -235,12 +238,6 @@ window.onload = async function () {
 					records = [];
 				matchInfo = [];
 				selectedRikishiHeya = event.target.dataset.inf;
-				if (event.target.id.slice(-1) == 'W') {
-					var emptySpace = document.createElement("span");
-
-					emptySpace.className = "h2h";
-					event.target.parentNode.nextSibling.prepend(emptySpace);
-				}
 				event.target.nextSibling.classList.add("selected");
 				/*
 				div = event.target.id.slice(0, 2);
@@ -314,8 +311,14 @@ window.onload = async function () {
 							east = "Mz " + records[i].eastShikona;
 							west = "Mz " + records[i].westShikona;
 						} else {
-							east = rankAbbr[east[0]] + east[1] + (east[2] == undefined ? "TD" : east[2].charAt(0).toLowerCase()) + ' ' + records[i].eastShikona;
-							west = rankAbbr[west[0]] + west[1] + (west[2] == undefined ? "TD" : west[2].charAt(0).toLowerCase()) + ' ' + records[i].westShikona;
+							if (records[i].eastRank == "") 
+								east = "--- " + records[i].eastShikona;
+							else 
+								east = rankAbbr[east[0]] + east[1] + (east[2] == undefined ? "TD" : east[2].charAt(0).toLowerCase()) + ' ' + records[i].eastShikona;
+							if (records[i].westRank == "") 
+								west = "--- " + records[i].westShikona;
+							else 
+								west = rankAbbr[west[0]] + west[1] + (west[2] == undefined ? "TD" : west[2].charAt(0).toLowerCase()) + ' ' + records[i].westShikona;
 						}
 						if (records[i].eastId == selectedRikishiId) 
 							rikishiText = [east, west];
@@ -696,6 +699,21 @@ window.onload = async function () {
 			 				label.classList.add("divDeb");
 			 			else 
 			 				label.classList.add("rankDeb");
+		 			}
+		 			if (intaiRikishi.includes(label.innerText)) {
+		 				var intaiSign = document.createElement("span");
+
+		 				intaiSign.setAttribute("class", "marking intai");
+		 				intaiSign.innerText = 'R';
+		 				intaiSign.title = "Retired";
+		 				h2hCell.appendChild(intaiSign);
+		 			} else if (kyujoRikishi.includes(label.innerText)) {
+		 				var kyujoSign = document.createElement("span");
+
+		 				kyujoSign.setAttribute("class", "marking kyujo");
+		 				kyujoSign.innerText = 'A';
+		 				kyujoSign.title = "Absent from Day 1";
+		 				h2hCell.appendChild(kyujoSign);
 		 			}
 		 			label.setAttribute("for", divShort + rankNum + side);
 		 			cell.appendChild(radioButton);
