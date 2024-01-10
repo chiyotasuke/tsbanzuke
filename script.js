@@ -136,7 +136,6 @@ window.onload = async function () {
 		"Shinzan"
 		];
 	var kyujoRikishi = [
-		"Enho"
 		]
 	/*
 	var heyaLocal = window.localStorage.getItem("heyaRikishi");
@@ -178,19 +177,27 @@ window.onload = async function () {
 		document.getElementById("banzukeContainer").appendChild(banzukeTable);
 	}
 	createMakuuchiBanzuke(addClickFunction);
+
 	document.getElementById("closeButton").addEventListener("click", function() {
 		document.getElementById("matchesBox").classList.add("hidden");
 		document.getElementById("matchesBox").close();
 	});
 	document.getElementsByTagName("h2")[0].innerText = bashoName[banzukeDate.slice(4)] + ' ' + banzukeDate.slice(0, 4) + " Banzuke";
 	window.onresize = matchesBoxPosition;
+	$(".siteToggle").on("change", function() {
+		var links = $(".proLink");
+
+		for (const link of links) {
+			link.href = getHref(link.dataset.ids);
+		}
+	});
 
 	function addClickFunction() {
 		var cells = document.getElementsByName("rs");
 		var divNum = {"Ms": 2, "Sd": 3, "Jd": 4, "Jk": 5};
 		var divNameShort = {'0': 'M', '1': 'J', '2': "Ms", '3': "Sd", '4': "Jd", '5': "Jk"};
 
-		jQuery("input").click(showOpponents);
+		$('input[name="rs"]').on("click", showOpponents);
 		async function showOpponents(event) {
 			var allRadio = document.getElementsByName("rs");
 			var prevClicked = document.querySelectorAll(".selected");
@@ -385,31 +392,40 @@ window.onload = async function () {
 						var selected = document.getElementsByClassName("selected")[0];
 						var rikishi1LinkUrl;
 						var rikishi1Title;
+						var rikishi1Id;
 						var rikishi2LinkUrl;
 						var rikishi2Title;
+						var rikishi2Id;
 						var aiteCell;
 
 						rikishi1Title = selected.title;
 						rikishi1LinkUrl = selected.nextSibling.href;
+						rikishi1Id = selected.nextSibling.dataset.ids;
 						if (this.parentNode.nextSibling != null) {
 							rikishi2Title = this.parentNode.nextSibling.children[1].title;
 							rikishi2LinkUrl = this.parentNode.nextSibling.children[2].href;
+							rikishi2Id = this.parentNode.nextSibling.children[2].dataset.ids;
 							aiteCell = this.parentNode.nextSibling;
 						}
 						else {
 							rikishi2Title = this.parentNode.previousSibling.children[1].title;
 							rikishi2LinkUrl = this.parentNode.previousSibling.children[2].href;
+							rikishi2Id = this.parentNode.previousSibling.children[2].dataset.ids;
 							aiteCell = this.parentNode.previousSibling;
 						}
 						id = aiteCell.children[0].value;
 						rikishi1Link.innerText = selected.innerText;
 						rikishi1Link.title = rikishi1Title;
 						rikishi1Link.href = rikishi1LinkUrl;
+						rikishi1Link.target = "leTab";
+						rikishi1Link.setAttribute("data-ids", rikishi1Id);
+						rikishi1Link.className = "proLink";
 						rikishi2Link.innerText = aiteCell.children[1].innerText;
 						rikishi2Link.title = rikishi2Title;
 						rikishi2Link.href = rikishi2LinkUrl;
-						rikishi1Link.target = "dbWin";
-						rikishi2Link.target = "dbWin";
+						rikishi2Link.target = "leTab";
+						rikishi2Link.setAttribute("data-ids", rikishi2Id);
+						rikishi2Link.className = "proLink";
 						headerText.id = "h2hText";
 						headerText.appendChild(rikishi1Link);
 						headerText.innerHTML += " vs. ";
@@ -438,13 +454,15 @@ window.onload = async function () {
 
 								link.innerText = links[k].text;
 								link.href = links[k].url;
-								link.target = "dbWin";
+								link.target = "leTab";
 								if (k == 2) {
 									var rank = document.createElement("span");
 									var image = document.createElement("img");
 									var imgSrc;
 									var imgAlt;
 									
+									link.setAttribute("data-ids", rikishi1Id);
+									link.className = "proLink";
 									if (matches[j].won) {
 										if (matches[j].kimarite == "fusen") {
 											imgSrc = "fusensho.png";
@@ -480,6 +498,8 @@ window.onload = async function () {
 									var imgSrc;
 									var imgAlt;
 									
+									link.setAttribute("data-ids", rikishi2Id);
+									link.className = "proLink";
 									if (matches[j].won) {
 										if (matches[j].kimarite == "fusen") {
 											imgSrc = "fusenpai.png";
@@ -659,11 +679,11 @@ window.onload = async function () {
 		 			var radioButton = document.createElement("input"), 
 		 				label = document.createElement("label"), 
 		 				cell = document.createElement("td"), 
-		 				sumoRefLink = document.createElement('a'), 
+		 				profileLink = document.createElement('a'), 
 		 				rankNum = eastRank[1], 
 		 				h2hCell = document.createElement("td"), 
 		 				rikishiInfo, 
-		 				dbId, heya, shusshin, birthDate, hatsu, hw;
+		 				nskId, dbId, heya, shusshin, birthDate, hatsu, hw;
 
 		 			divShort = rankAbbr[eastRank[0]];
 		 			radioButton.id = divShort + rankNum + side;
@@ -686,15 +706,14 @@ window.onload = async function () {
 		 			if (rikishiInfo.weight != undefined) 
 		 			radioButton.setAttribute("data-inf", rikishiInfo.heya);
 		 			label.innerText = side == 'E' ? rikishi.east[i].shikonaEn : rikishi.west[i].shikonaEn;
-		 			dbId = rikishiInfo.sumodbId;
-		 			if (dbId == undefined) 
-						sumoRefLink.href = "https://sumodb.sumogames.de/Rikishi.aspx?shikona=" + label.innerText + "&b=" + banzukeDate;
-					else 
-						sumoRefLink.href = "https://sumodb.sumogames.de/Rikishi.aspx?r=" + dbId;
-					sumoRefLink.target = "dbWin";
-					sumoRefLink.innerText = 'ⓘ';
-					sumoRefLink.className = "dbLink";
-					sumoRefLink.title = "Open rikishi information page";
+		 			nskId = rikishiInfo.nskId != undefined ? rikishiInfo.nskId : '0';
+		 			dbId = rikishiInfo.sumodbId != undefined ? rikishiInfo.sumodbId : '0';
+		 			profileLink.setAttribute("data-ids", nskId + '_' + dbId);
+					profileLink.target = "leTab";
+					profileLink.innerText = 'ⓘ';
+					profileLink.className = "proLink";
+					profileLink.title = "Open rikishi profile page";
+					//profileLink.setAttribute("onclick", "openProfile()")
 		 			if (rankDebutRikishi.includes(label.innerText)) {
 		 				if (divDebutRikishi.includes(label.innerText)) 
 			 				label.classList.add("divDeb");
@@ -719,13 +738,14 @@ window.onload = async function () {
 		 			label.setAttribute("for", divShort + rankNum + side);
 		 			cell.appendChild(radioButton);
 		 			cell.appendChild(label);
-		 			cell.appendChild(sumoRefLink);
+		 			cell.appendChild(profileLink);
+		 			cell.children[2].href = getHref(profileLink.dataset.ids);
 		 			h2hCell.className = "sideCell";
 		 			if (side == 'E') {
 		 				row.appendChild(h2hCell);
 				 		row.appendChild(cell);
 		 			} else {
-		 				//sumoRefLink.classList.add("west");
+		 				//profileLink.classList.add("west");
 		 				row.appendChild(cell);
 				 		row.appendChild(h2hCell);
 		 			}
@@ -749,5 +769,22 @@ window.onload = async function () {
 			$("#matchesBox").css("margin-left", windowWidth/2 - matchesWidth - (tablesWidth/2) - 10 + "px");
 	    else 
 	    	$("#matchesBox").css("margin-left", '0');
+	}
+	function getHref(id) {
+		var ids = id.split('_');
+		var boxes = document.getElementsByName("site");
+		var site = $(".siteToggle")[0].checked ? "sumodb" : "nsk";
+		var href;
+
+		if (site == "nsk" && ids[0] == '0') 
+			url = "https://sumodb.sumogames.de/Rikishi.aspx?r=" + ids[1];
+		else if (site == "nsk" && ids[0] != '0')
+			url = "https://www.sumo.or.jp/EnSumoDataRikishi/profile/" + ids[0];
+		else if (ids[1] == '0') 
+			url = "https://sumodb.sumogames.de/Rikishi.aspx?shikona=" + $('#' + id).prev().text() + "&b=" + banzukeDate;
+		else 
+			url = "https://sumodb.sumogames.de/Rikishi.aspx?r=" + ids[1];
+		
+		return url;
 	}
 }
