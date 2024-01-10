@@ -545,7 +545,14 @@ window.onload = async function () {
 						}
 						dialogBox.children[0].prepend(headerText);
 						dialogBox.appendChild(table);
-						dialogBox.scrollTop = dialogBox.scrollHeight;
+						var loadedImgCount = 0;
+						for (const image of $("img")) {
+							image.onload = function() {
+								loadedImgCount++;
+								if (loadedImgCount == $("img").length) 
+									dialogBox.scrollTop = dialogBox.scrollHeight;
+							}
+						}
 						matchesBoxPosition();
 					});
 
