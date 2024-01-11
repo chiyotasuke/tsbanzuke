@@ -539,12 +539,12 @@ window.onload = async function () {
 							dialogBox.classList.remove("hidden");
 							dialogBox.show();
 						}
-						if (dialogBox.children[1] != undefined) {
+						if (dialogBox.children[2] != undefined) {
 							dialogBox.children[0].children[0].remove();
 							dialogBox.children[1].remove();
 						}
 						dialogBox.children[0].prepend(headerText);
-						dialogBox.appendChild(table);
+						dialogBox.insertBefore(table, dialogBox.children[1]);
 						var loadedImgCount = 0;
 						for (const image of $("img")) {
 							image.onload = function() {

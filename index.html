@@ -23,9 +23,11 @@
 				<div class="legendItem"><span class="marking intai">R</span> Retired</div>
 				<div class="legendItem"><span class="marking kyujo">A</span> Absent from Day 1</div>
 			</div>
-			Open rikishi profile page on 
-			<label><input type="radio" class="siteToggle" name="site" value="sumodb" autocomplete="on" checked>SumoDB</label>
-			<label><input type="radio" class="siteToggle" name="site" value="nsk" autocomplete="on">JSA Site</label>
+			<form>
+				Open rikishi profile page on 
+				<label><input id="sumodbRadio" type="radio" class="siteToggle" name="site" value="sumodb" autocomplete="on" checked>SumoDB</label>
+				<label><input id="nskRadio" type="radio" class="siteToggle" name="site" value="nsk" autocomplete="on">JSA Site</label>
+			</form>
 		</ul>
 	</header>
 	<div class="hidden" id="selectedRikishiPanel"></div>
@@ -35,6 +37,7 @@
 		<div id="tableHead">
 			<button id="closeButton">Close</button>
 		</div>
+		<div id="tableBottom"></div>
 	</dialog>
 <style>
 
@@ -161,6 +164,10 @@ label {
 	outline-color: #ff00008f !important;
 }
 
+.rankDeb:hover {
+	outline-color: blue !important;
+}
+
 .selected {
 	background: #6060ff;
   	color: white;
@@ -201,7 +208,6 @@ dialog {
   	border: none;
   	box-shadow: 0 0 15px 5px #00000082;
   	overflow-y: scroll;
-  	border-bottom: 25px solid transparent;
   	box-sizing: border-box;
   	border-radius: 10px;
   	max-width: 100%;
@@ -235,8 +241,8 @@ a {
   	padding: 4px;
   	text-align: center;
   	font-size: 15px;
-  	background: white;
-  	border-radius: 0 0 5px 0;
+  	background: #f8f8de;
+  	left: 0;
 }
 
 #closeButton {
@@ -340,6 +346,14 @@ a {
 
 .siteToggle {
 	display: inline-block;
+}
+
+#tableBottom {
+  height: 22px;
+  position: sticky;
+  bottom: 0;
+  background: #f8f8de;
+  left: 0;
 }
 
 </style>
