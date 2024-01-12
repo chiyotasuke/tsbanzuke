@@ -23,11 +23,13 @@
 				<div class="legendItem"><span class="marking intai">R</span> Retired</div>
 				<div class="legendItem"><span class="marking kyujo">A</span> Absent from Day 1</div>
 			</div>
-			<form>
+			<div id="toggleContainer">
 				Open rikishi profile page on 
-				<label><input id="sumodbRadio" type="radio" class="siteToggle" name="site" value="sumodb" autocomplete="on" checked>SumoDB</label>
-				<label><input id="nskRadio" type="radio" class="siteToggle" name="site" value="nsk" autocomplete="on">JSA Site</label>
-			</form>
+				<div>
+					<label id="sumodbRadio"><input type="radio" class="siteToggle" name="site" value="sumodb" autocomplete="on" checked>SumoDB</label>
+					<label id="nskRadio"><input type="radio" class="siteToggle" name="site" value="nsk" autocomplete="on">JSA Site</label>
+				</div>
+			</div>
 		</ul>
 	</header>
 	<div class="hidden" id="selectedRikishiPanel"></div>
@@ -346,16 +348,52 @@ a {
 	margin-bottom: 10px;
 }
 
-.siteToggle {
-	display: inline-block;
-}
-
 #tableBottom {
   height: 22px;
   position: sticky;
   bottom: 0;
   background: #f8f8de;
   left: 0;
+}
+
+div > label {
+  border: 2px outset #000000a1;
+  background: #e8e8e8;
+  padding: 0px 3px;
+  color: #5c5c5c;
+  text-shadow: -1px -1px #ffffff80;
+  font-family: Segoe UI, Noto Sans, Open Sans;
+  font-size: 14px;
+}
+
+div > label:hover {
+	cursor: pointer;
+	color: black;
+	border-color: #000000d6;
+}
+
+label:has(> .siteToggle:checked) {
+  border-color: black;
+  background: lightgreen;
+  color: black;
+}
+
+#sumodbRadio {
+  border-radius: 5px 0 0 5px;
+}
+
+#nskRadio {
+  border-radius: 0 5px 5px 0;
+}
+
+#toggleContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+#toggleContainer > div {
+  display: inline-flex;
 }
 
 </style>

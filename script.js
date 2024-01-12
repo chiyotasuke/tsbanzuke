@@ -136,6 +136,7 @@ window.onload = async function () {
 		"Shinzan"
 		];
 	var kyujoRikishi = [
+		"Enho"
 		]
 	/*
 	var heyaLocal = window.localStorage.getItem("heyaRikishi");
@@ -549,8 +550,10 @@ window.onload = async function () {
 						for (const image of $("img")) {
 							image.onload = function() {
 								loadedImgCount++;
-								if (loadedImgCount == $("img").length) 
+								if (loadedImgCount == $("img").length) {
 									dialogBox.scrollTop = dialogBox.scrollHeight;
+									dialogBox.scrollLeft = 0;
+								}
 							}
 						}
 						matchesBoxPosition();
@@ -768,14 +771,18 @@ window.onload = async function () {
 	 	callback();
 	}
 	function matchesBoxPosition() {
-	    var matchesWidth = document.getElementById("matchesBox").offsetWidth;
-		var tablesWidth = document.getElementById("banzukeContainer").offsetWidth; 
-		var windowWidth = window.innerWidth;
+		var dialogBox = document.getElementById("matchesBox");
 
-		if (matchesWidth + (tablesWidth/2) + 10 < windowWidth/2) 
-			$("#matchesBox").css("margin-left", windowWidth/2 - matchesWidth - (tablesWidth/2) - 10 + "px");
-	    else 
-	    	$("#matchesBox").css("margin-left", '0');
+		if (dialogBox.open && !dialogBox.classList.contains("hidden")) {
+		    var matchesWidth = document.getElementById("matchesBox").offsetWidth;
+			var tablesWidth = document.getElementById("banzukeContainer").offsetWidth; 
+			var windowWidth = window.innerWidth;
+
+			if (matchesWidth + (tablesWidth/2) + 10 < windowWidth/2) 
+				$("#matchesBox").css("margin-left", windowWidth/2 - matchesWidth - (tablesWidth/2) - 10 + "px");
+		    else 
+		    	$("#matchesBox").css("margin-left", '0');
+		}
 	}
 	function getHref(id) {
 		var ids = id.split('_');
