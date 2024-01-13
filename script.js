@@ -136,7 +136,38 @@ window.onload = async function () {
 		"Shinzan"
 		];
 	var kyujoRikishi = [
-		"Enho"
+		"Takakento", 
+		"Kiho", 
+		"Ryutsukasa", 
+		"Hayatefuji", 
+		"Daiyusho", 
+		"Ryuo", 
+		"Minorufuji", 
+		"Hatooka", 
+		"Tochimaru", 
+		"Yurikisho", 
+		"Enho", 
+		"Kiyonoyama", 
+		"Wakayamanaka", 
+		"Shosei", 
+		"Kyokushori", 
+		"Mishima", 
+		"Sadanokuni", 
+		"Chiyooga", 
+		"Kosei", 
+		"Oginohama", 
+		"Yamadaumi", 
+		"Tsuyasato", 
+		"Ienoshima", 
+		"Dewataikai", 
+		"Wakaikki", 
+		"Sadanojo", 
+		"Okuyama", 
+		"Miyakogawa", 
+		"Aoifuji", 
+		"Amao", 
+		"Makotofuji", 
+		"Higohikari"
 		]
 	/*
 	var heyaLocal = window.localStorage.getItem("heyaRikishi");
