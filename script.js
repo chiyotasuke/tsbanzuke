@@ -208,7 +208,7 @@ window.onload = async function () {
 		banzukeTable.appendChild(tableBody);
 		document.getElementById("banzukeContainer").appendChild(banzukeTable);
 	}
-	createMakuuchiBanzuke(addClickFunction);
+	createMakuuchiBanzuke(addStuff);
 
 	document.getElementById("closeButton").addEventListener("click", function() {
 		document.getElementById("matchesBox").classList.add("hidden");
@@ -216,19 +216,14 @@ window.onload = async function () {
 	});
 	document.getElementsByTagName("h2")[0].innerText = bashoName[banzukeDate.slice(4)] + ' ' + banzukeDate.slice(0, 4) + " Banzuke";
 	window.onresize = matchesBoxPosition;
-	$(".siteToggle").on("change", function() {
-		var links = $(".proLink");
+	$(".siteToggle").on("change", changeHref);
 
-		for (const link of links) {
-			link.href = getHref(link.dataset.ids);
-		}
-	});
-
-	function addClickFunction() {
+	function addStuff() {
 		var cells = document.getElementsByName("rs");
 		var divNum = {"Ms": 2, "Sd": 3, "Jd": 4, "Jk": 5};
 		var divNameShort = {'0': 'M', '1': 'J', '2': "Ms", '3': "Sd", '4': "Jd", '5': "Jk"};
 
+		changeHref();
 		$('input[name="rs"]').on("click", showOpponents);
 		async function showOpponents(event) {
 			var allRadio = document.getElementsByName("rs");
@@ -780,7 +775,7 @@ window.onload = async function () {
 		 			cell.appendChild(radioButton);
 		 			cell.appendChild(label);
 		 			cell.appendChild(profileLink);
-		 			cell.children[2].href = getHref(profileLink.dataset.ids);
+		 			//cell.children[2].href = getHref(profileLink.dataset.ids);
 		 			h2hCell.className = "sideCell";
 		 			if (side == 'E') {
 		 				row.appendChild(h2hCell);
@@ -826,10 +821,17 @@ window.onload = async function () {
 		else if (site == "nsk" && ids[0] != '0')
 			url = "https://www.sumo.or.jp/EnSumoDataRikishi/profile/" + ids[0];
 		else if (ids[1] == '0') 
-			url = "https://sumodb.sumogames.de/Rikishi.aspx?shikona=" + $('#' + id).prev().text() + "&b=" + banzukeDate;
+			url = "https://sumodb.sumogames.de/Rikishi.aspx?shikona=" + $("a[data-ids|='" + id + "']").prev().text() + "&b=" + banzukeDate;
 		else 
 			url = "https://sumodb.sumogames.de/Rikishi.aspx?r=" + ids[1];
 		
 		return url;
+	}
+	function changeHref() {
+		var links = $(".proLink");
+
+		for (const link of links) {
+			link.href = getHref(link.dataset.ids);
+		}
 	}
 }
