@@ -1,5 +1,5 @@
 window.onload = async function () {
-  const banzukeDate = "202403"; // 196909 until now for sekitori; from 198901 all lower division matchups are complete
+  const banzukeDate = "202405"; // 196909 until now for sekitori; from 198901 all lower division matchups are complete
   const divisions = [
     "Makuuchi",
     "Juryo",
@@ -43,12 +43,132 @@ window.onload = async function () {
   var matchInfo = [];
   var activeRikishiId = [];
   const rankDebutRikishi = [
-    
+    "Hiradoumi",
+    "Gonoyama",
+    "Takerufuji",
+    "Mitoryu",
+    "Asakoryu",
+    "Kototebakari",
+    "Nabatame",
+    "Daiseizan",
+    "Tokunomusashi",
+    "Wakaikari",
+    "Miyagi",
+    "Nagamura",
+    "Haruyama",
+    "Asahakuryu",
+    "Obara",
+    "Wakanosho",
+    "Tanji",
+    "Anosho",
+    "Shiroma",
+    "Daishoryu",
+    "Kaigo",
+    "Kirinryu",
+    "Matsui",
+    "Suzaki",
+    "Akiyoshi",
+    "Takashoki",
+    "Koki",
+    "Senho",
+    "Tatsuosho",
+    "Kanazawa",
+    "Harunishiki",
+    "Higonomaru",
+    "Soma",
+    "Shinyashiki",
+    "Kuwae",
+    "Takanoryu",
+    "Dairinzan",
+    "Tokitenran",
+    "Asakiryu",
+    "Suyama",
+    "Kiyonohana",
+    "Sato",
+    "Hayashiryu",
+    "Kassho",
+    "Kazeyuki",
+    "Chiyokozan",
+    "Reonmaru",
+    "Senshoho",
+    "Chiyorozan",
+    "Najima",
+    "Chiyotsurugi",
+    "Asashorei",
+    "Okanojo",
+    "Naniwamusashi",
+    "Yumenofuji",
+    "Datenoumi",
+    "Anryukai",
+    "Shishimaru",
+    "Daitensho",
+    "Togyokuko",
+    "Daitengu",
+    "Koga",
+    "Shimamura",
+    "Asasakurai",
+    "Sachinoyama",
+    "Karino"
   ];
   const divDebutRikishi = [
-    
+    "Onosato",
+    "Oshoma",
+    "Tokihayate",
+    "Onokatsu",
+    "Tochitaikai",
+    "Kazekeno",
+    "Aonishiki",
+    "Rinko",
+    "Hamanoumi",
+    "Kotetsu",
+    "Ryuji",
+    "Fujimusashi",
+    "Kyokushozan",
+    "Daitenshin",
+    "Anhibiki",
+    "Kyokukaiyu",
+    "Inami",
+    "Daimasakari",
+    "Suzunofuji",
+    "Nishikio",
+    "Ayanofuji",
+    "Kyokutendo",
+    "Kyokutairyu",
+    "Daishiyama",
+    "Kato",
+    "Kumanohana",
+    "Shibuya",
+    "Fujihara",
+    "Seihakuho",
+    "Niiya",
+    "Ikazuchiarashi",
+    "Noda",
+    "Imamura",
+    "Sekimoto",
+    "Hamada",
+    "Takeuchi",
+    "Ujiie",
+    "Hakuryu",
+    "Daikosho",
+    "Shoryu",
+    "Kotokoguchi",
+    "Tsurugifuji",
+    "Daishisho",
+    "Narita",
+    "Uzumasa",
+    "Amidaishin",
+    "Fukuoka",
+    "Ono",
+    "Tamaki",
+    "Amanofuji",
+    "Seiseigo",
+    "Wakasasaki",
+    "Nakayama",
+    "Hara"
   ];
-  var intaiRikishi = [];
+  var intaiRikishi = [
+    "Otani"
+  ];
   var kyujoRikishi = [
 
   ];
@@ -620,11 +740,10 @@ window.onload = async function () {
           profileLink.innerText = "ⓘ";
           profileLink.className = "proLink";
           profileLink.title = "Open rikishi profile page";
-          if (rankDebutRikishi.includes(label.innerText)) {
-            if (divDebutRikishi.includes(label.innerText))
+          if (rankDebutRikishi.includes(label.innerText)) 
+            label.classList.add("rankDeb");
+          if (divDebutRikishi.includes(label.innerText))
               label.classList.add("divDeb");
-            else label.classList.add("rankDeb");
-          }
           if (intaiRikishi.includes(label.innerText)) {
             var intaiSign = document.createElement("span");
 
