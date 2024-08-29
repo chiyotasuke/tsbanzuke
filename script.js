@@ -488,7 +488,7 @@ window.onload = async function () {
       Komusubi: 1,
       Maegashira: 0,
     };
-    var resp = await fetch("https://www.sumo-api.com/api/rikishis?intai=true");
+    var resp = await fetch("https://www.sumo-api.com/api/rikishis");
     var respJson = await resp.json();
     var riki = respJson.records;
 
