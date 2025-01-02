@@ -573,6 +573,18 @@ window.onload = async function () {
           radioButton.value =
             side == "E" ? rikishi.east[i].rikishiID : rikishi.west[i].rikishiID;
           rikishiInfo = riki.find((r) => r.id == radioButton.value);
+          if (rikishiInfo == undefined) {
+            rikishiInfo = {
+              heya: "",
+              shusshin: "",
+              birthDate: "",
+              debut: "",
+              height: "",
+              weight: "",
+              sumodbId: "",
+              nskId: ""
+            }
+          }
           heya = rikishiInfo.heya != undefined ? rikishiInfo.heya : "-";
           shusshin =
             rikishiInfo.shusshin != undefined
