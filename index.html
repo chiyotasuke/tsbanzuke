@@ -1,132 +1,287 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=0.8">
-	<script type="text/javascript" src="script.js"></script>
-	<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/underscore@1.13.6/underscore-umd-min.js"></script>
-	<title>H2H records banzuke</title>
-</head>
-<body>
-	<header>
-		<h1>
-			<b>Taisen seiseki (head-to-head records) banzuke</b>
-			<span id="credit">Powered by <a href="https://www.sumo-api.com/" target="_blank">The Sumo API</a></span>
-		</h1>
-	      	<a href="https://www.sumo.or.jp/EnHonbashoMain/absence/" target="_blank" style="text-decoration: underline; font-size: 17px; margin: 30px; display: block;">Absent rikishi info (JSA website)</a>
-		<ul>
-			<li>Click on a rikishi to see his win-loss records displayed alongside <u>all the rikishi on the banzuke</u>. Based on the records, the opponents are colored. Rikishi of the same heya are striped</li>
-			<li>Then you can click on a record number and take a look at all of the matchups</li>
-		        <!--
-			<div id="legend">
-				<span class="rankDeb legendItem">Rikishi at career high rank</span>
-				<span class="divDeb legendItem">Rikishi at division debut</span>
-				<div class="legendItem"><span class="marking intai">R</span> Retired</div>
-				<div class="legendItem"><span class="marking kyujo">A</span> Absent from Day 1</div>
-			</div>
-			-->
-			<div id="toggleContainer">
-				Open rikishi profile page on 
-				<div>
-					<label id="sumodbRadio"><input type="radio" class="siteToggle" name="site" value="sumodb" autocomplete="on" checked>SumoDB</label>
-					<label id="nskRadio"><input type="radio" class="siteToggle" name="site" value="nsk" autocomplete="on">JSA Site</label>
-				</div>
-			</div>
-		</ul>
-	</header>
-	<div class="hidden" id="selectedRikishiPanel"></div>
-	<h2></h2>
-	<div id="banzukeContainer"></div>
-	<dialog id="matchesBox" class="hidden">
-		<div id="tableHead">
-			<button id="closeButton">Close</button>
-		</div>
-		<div id="tableBottom"></div>
-	</dialog>
-<style>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.8" />
+    <script type="text/javascript" src="script.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.6.4.min.js"
+      integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/underscore@1.13.6/underscore-umd-min.js"></script>
+    <title>H2H records banzuke</title>
+  </head>
+  <body>
+    <header>
+      <h1>
+        <b>Taisen seiseki (head-to-head records) banzuke</b>
+        <span id="credit"
+          >Powered by
+          <a href="https://www.sumo-api.com/" target="_blank"
+            >The Sumo API</a
+          ></span
+        >
+      </h1>
+      <a href="https://www.sumo.or.jp/EnHonbashoMain/absence/" target="_blank" style="text-decoration: underline; font-size: 17px; margin: 30px; display: block;">Absent rikishi info (JSA website)</a>
+      <ul>
+        <li>
+          Click on a rikishi to see his win-loss records (before the basho) displayed alongside
+          other rikishi on the banzuke. Based on the records, the
+          opponents are colored (Color going towards red means bad record, yellow means equal record and green means good record. Darker the color the more matches fought and lighter the opposite). Rikishi of the same heya are striped
+        </li>
+        <li>
+          Then you can click on a record cell and see the total matchups between the two rikishi
+        </li>
+        <!--
+        <div id="legend">
+          <span class="rankDeb legendItem">Rikishi at career high rank</span>
+          <span class="divDeb legendItem">Rikishi at division debut</span>
+          <div class="legendItem">
+            <span class="marking intai">R</span> Retired
+          </div>
+          <div class="legendItem">
+            <span class="marking kyujo">A</span> Absent from Day 1
+          </div>
+        </div>
+        -->
+        <div id="toggleContainer">
+          Open rikishi profile page on
+          <div>
+            <label id="sumodbRadio"
+              ><input
+                type="radio"
+                class="siteToggle"
+                name="site"
+                value="sumodb"
+                autocomplete="on"
+                checked
+              />SumoDB</label
+            >
+            <label id="nskRadio"
+              ><input
+                type="radio"
+                class="siteToggle"
+                name="site"
+                value="nsk"
+                autocomplete="on"
+              />JSA Site</label
+            >
+          </div>
+        </div>
+        <label id="darkMode"><input type="checkbox" id="darkModeToggle" autocomplete="off">Dark mode</label>
+        Select a basho:
+        <select id="bashoSelect">
+        </select>
+      </ul>
+    </header>
+    <div class="hidden" id="selectedRikishiPanel">placeholder</div>
+    <h2></h2>
+    <div id="banzukeContainer"></div>
+    <dialog id="matchesBox" class="hidden">
+      <div id="tableHead">
+        <button id="closeButton">Close</button>
+      </div>
+      <div id="tableBottom"></div>
+    </dialog>
+    <style>
+      body {
+        font-family: Helvetica, Arial, sans-serif;
+        margin: 0;
+        background: #c5ffb1;
+      }
+      #darkMode {
+        display: block;
+        margin: 5px;
+        width: fit-content;
+      }
+      .dark {
+        background: #53664d;
+      }
+      .dark header {
+        background: #7878a6;
+      }
+      .dark h2 {
+        color: white;
+      }
+      .dark table {
+        border: 2px solid #333;
+        background: #4d4d4d;
+      }
+      .dark th {
+        color: white;
+      }
+      .dark thead th {
+        background: #3f3fff;
+      }
+      .dark .sanyakuRow > th {
+        background: #4c6066;
+      }
+      .dark #banzukeContainer .proLink {
+        color: white;
+        text-shadow: 1px 1px #00000045;
+      }
+      .dark .sameHeya > .proLink {
+        background: #535353;
+      }
+      .dark .rCell {
+        box-shadow: 0 8px 8px inset #00000012;
+      }
+      .dark .rCell.sameHeya:has(> .selected) {
+        background: #6e6eb7;
+      }
+      .dark .h2h {
+        color: #98e6ff;
+      }
+      .dark #tableHead {
+        background: linear-gradient(#444 50%, #6a6a6a);
+        color: white;
+      }
+      .dark #tableBottom {
+        background: linear-gradient(#6a6a6a 50%, #444);
+      }
+      .dark #matchesTable td {
+        border: 1px solid #393939;
+      }
+      .dark #matchesTable {
+        background: #747482;
+        color: black;
+      }
+      .playoff {
+        background: #ffff7a;
+      }
+      .fusen {
+        font-style: italic;
+        color: #4a4a4a;
+      }
+      #loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: inline-grid;
+      }
+      #loading > span {
+        margin: auto;
+        background: white;
+        padding: 12px;
+        border-radius: 15px;
+        box-shadow: 3px 3px #00000080;
+        border: 1px solid black;
+        font-size: large;
+        text-align: center;
+      }
+      #loading img {
+        height: 30px;
+        vertical-align: middle;
+      }
+      .notice {
+        display: block;
+        font-size: smaller;
+        color: red;
+        text-decoration-color: red;
+        cursor: pointer;
+      }
+      .rCell {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px;
+        box-shadow: 0 8px 8px inset #ffffff2e;
+        border-style: solid;
+        border-color: #c8c8c8;
+        border-width: 0 1px;
+      }
+      .rCell > input {
+        appearance: none;
+        -webkit-appearance: none;
+        margin: 0 4px 0 8px;
+        background: rgba(255, 255, 255, 0.33);
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(0, 0, 0, 0.5);
+        border-radius: 25%;
+      }
+      .rCell > input:hover {
+        filter: brightness(75%);
+      }
+      .rCell > input:checked {
+        background: white;
+        border: 6px solid #4a4aff;
+      }
+      header {
+        font-size: 15px;
+        top: 0;
+        position: relative;
+        padding: 10px;
+        background: #c7c7ff;
+        margin-bottom: 20px;
+      }
 
-body {
-	font-family: Helvetica, Arial, sans-serif;
-	margin: 0;
-	background: #c5ffb1;
-}
+      h1 {
+        font-size: 22px;
+        font-family: serif;
+        text-align: center;
+      }
 
-header {
-  font-size: 15px;
-  top: 0;
-  position: relative;
-  padding: 10px;
-  background: #c7c7ff;
-  margin-bottom: 20px;
-}
+      #credit {
+        float: right;
+        font-size: smaller;
+        font-weight: normal;
+        position: absolute;
+        right: 1%;
+        display: block;
+      }
 
-h1 {
-  font-size: 22px;
-  font-family: serif;
-  text-align: center;
-}
+      ul {
+        margin-top: 20px;
+      }
 
-#credit {
-  float: right;
-  font-size: smaller;
-  font-weight: normal;
-  position: absolute;
-  right: 1%;
-  display: block;
-}
+      h2 {
+        text-align: center;
+        text-decoration: underline;
+      }
 
-ul {
-  margin-top: 20px;
-}
+      #banzukeContainer {
+        display: grid;
+        margin: auto;
+        width: fit-content;
+        margin-bottom: 40vh;
+      }
 
-h2 {
-  text-align: center;
-  text-decoration: underline;
-}
-	
-input {
-	display: none;
-}
+      table {
+        border: 2px solid dimgray;
+        border-collapse: collapse;
+        font-size: 14px;
+        margin: 0 auto 20px;
+        background: #eee;
+      }
 
-#banzukeContainer {
-	display: grid;
-  	margin: auto;
-  	width: fit-content;
-  	margin-bottom: 40vh;
-}
+      td,
+      th {
+        padding: 0;
+      }
 
-table {
-	border: 2px solid black;
-	border-collapse: collapse;
-	font-size: 14px;
-	margin-bottom: 20px;
-	background: #dbdbdb;
-}
+      td {
+        min-width: 30px;
+      }
 
-td, th {
-	border: 1px solid #00000082;
-  	padding: 2px;
-}
+      th {
+        font-weight: normal;
+        padding: 2px 5px;
+        box-shadow: 0px -1px inset #c8c8c8;
+      }
 
-td {
-	min-width: 30px;
-}
+      thead th {
+        background: #8888f3;
+        font-weight: bold;
+        line-height: 20px;
+      }
 
-th {
-	font-weight: normal;
-	padding: 2px 5px;
-}
-
-thead th {
-	background: #8888f3;
-	font-weight: bold;
-}
-
-.sanyakuRow > * {
-	background: #e0e09a;
-}
-/*
+      .sanyakuRow > th {
+        background: #bbe1ed;
+      }
+      /*
 #sumoRefLink {
 	text-decoration: none;
   	border-radius: 5px;
@@ -134,273 +289,274 @@ thead th {
   	display: inline-block;
 }
 */
-td label, span.legendItem {
-  	width: 100%;
-  	display: table-cell;
-  	cursor: pointer;
-  	padding: 1px 2px;
-  	border-radius: 3px;
-  	background: white;
-  	color: #1a1a1a;
-  	text-shadow: 1px 1px #ffffff7d;
-  	outline: 2px outset #0000009c;
-}
+      td label,
+      span.legendItem {
+        width: 100%;
+        display: table-cell;
+        cursor: pointer;
+        padding: 1px 2px;
+        border-radius: 3px;
+        background: white;
+        color: #1a1a1a;
+        text-shadow: 1px 1px #ffffff7d;
+        outline: 2px outset #0000009c;
+      }
 
-label:hover {
-	outline-color: blue;
-}
+      label:hover {
+        outline-color: blue;
+      }
 
-label {
-	white-space: nowrap;
-}
+      label {
+        white-space: nowrap;
+      }
 
-.divDeb {
-  outline-offset: 3px;
-  box-shadow: 0 0 0 2px #ff00008f;
-  outline: 2px solid #ff00008f !important;
-}
+      .divDeb {
+        outline-offset: 3px;
+        box-shadow: 0 0 0 2px #ff00008f;
+        outline: 2px solid #ff00008f !important;
+      }
 
-.divDeb:hover {
-  box-shadow: 0 0 0 2px blue;
-  outline-color: #ff00008f;
-}
+      .divDeb:hover {
+        box-shadow: 0 0 0 2px blue;
+        outline-color: #ff00008f;
+      }
 
-.rankDeb {
-	outline-color: #ff00008f !important;
-}
+      .rankDeb {
+        outline-color: #ff00008f !important;
+      }
 
-.rankDeb:hover {
-	outline-color: blue !important;
-}
+      .rankDeb:hover {
+        outline-color: blue !important;
+      }
 
-.selected {
-	background: #6060ff;
-  	color: white;
-  	text-shadow: 1px 1px #00000082;
-}
+      .rCell.sameHeya:has(> .selected) {
+        background-image: none !important;
+        background: #9a9aff;
+      }
 
-.filled {
-	text-align: center;
-}
+      .filled {
+        text-align: center;
+      }
 
-.h2hNone {
-	font-size: 13px !important;
-  	color: dimgray !important;
-  	cursor: default !important;
-}
+      .h2hNone {
+        font-size: 13px !important;
+        color: dimgray !important;
+        cursor: default !important;
+      }
 
-.h2h {
-	color: darkblue;
-  	font-size: 14px;
-  	width: 100%;
-  	display: inline-block;
-  	outline: 1px solid transparent;
-  	border-radius: 3px;
-}
+      .h2h {
+        color: darkblue;
+        font-size: 14px;
+        display: inline-block;
+        padding: 2px 6px;
+        width: -moz-available;
+        width: -webkit-fill-available;
+      }
 
-.h2h:hover {
-	cursor: pointer;
-	outline-color: blue;
-}
+      .h2h:hover {
+        cursor: pointer;
+        background: #00000029;
+      }
 
-dialog {
-	position: fixed;
-  	left: 0;
-  	right: auto;
-  	top: 60%;
-  	max-height: 40%;
-  	padding: 0px;
-  	border: none;
-  	box-shadow: 0 0 15px 5px #00000082;
-  	overflow-y: scroll;
-  	box-sizing: border-box;
-  	border-radius: 10px;
-  	max-width: 100%;
-}
+      dialog {
+        position: fixed;
+        padding: 0px;
+        border: none;
+        box-shadow: 0 0 15px 5px #00000082;
+        overflow-y: scroll;
+        box-sizing: border-box;
+        border-radius: 10px;
+        max-width: 100%;
+        right: auto;
+        max-height: 40%;
+      }
 
-a:hover {
-  text-decoration: underline;
-}
+      a:hover {
+        text-decoration: underline;
+        text-decoration-color: blue;
+      }
 
-a {
-  text-decoration: none;
-  color: darkblue;
-}
+      a {
+        text-decoration: none;
+        color: darkblue;
+      }
 
-#matchesTable {
-	margin: 0;
-	background: #e5e5ff;
-	border-width: 3px;
-	border-color: #262626;
-	min-width: max-content;
-}
+      #matchesTable {
+        margin: 0;
+        background: #e5e5ff;
+        border: 2px solid #262626;
+        min-width: max-content;
+      }
 
-#matchesTable td {
-  	border-color: #000000ab;
-  	padding: 4px 5px;
-}
+      #matchesTable td {
+        border: 1px solid gray;
+        padding: 4px 5px;
+      }
 
-#tableHead {
-	top: 0;
-  	position: sticky;
-  	padding: 4px;
-  	text-align: center;
-  	font-size: 15px;
-  	background: #f8f8de;
-  	left: 0;
-}
+      #tableHead {
+        top: 0;
+        position: sticky;
+        padding: 4px;
+        text-align: center;
+        font-size: 15px;
+        background: linear-gradient(#f4f4f4 50%, #b3b3b3);
+        left: 0;
+      }
 
-#closeButton {
-	position: absolute;
-  	right: 5px;
-}
+      #closeButton {
+        position: absolute;
+        right: 5px;
+      }
 
-#h2hText {
-	font-size: 15px;
-}
+      #h2hText {
+        font-size: 15px;
+      }
 
-.hidden {
-	display: none;
-}
+      .hidden {
+        opacity: 0;
+      }
 
-.matchResult {
-	text-align: justify;
-  	line-height: 0;
-  	padding-bottom: 0px !important;
-}
+      .matchResult {
+        text-align: justify;
+        line-height: 0;
+        padding-bottom: 0px !important;
+      }
 
-.matchResult::after {
-  content: '';
-  display: inline-block;
-  width: 100%;
-}
+      .matchResult::after {
+        content: "";
+        display: inline-block;
+        width: 100%;
+      }
 
-.matchResult img {
-  width: 13px;
-  margin-bottom: -2px;
-}
+      .matchResult img {
+        width: 13px;
+        margin-bottom: -2px;
+      }
 
-.sameHeya {
-	background-image: url(unallowed.png) !important;
-}
+      .sameHeya {
+        background-image: url(unallowed.png) !important;
+        background-position: center;
+        background-blend-mode: color-burn;
+      }
 
-.sideCell {
-  text-align: center;
-  padding: 2px 5px;
-  white-space: nowrap;
-}
+      .sideCell {
+        text-align: center;
+        padding: 0;
+        white-space: nowrap;
+        box-shadow: 0px -1px inset #c8c8c8;
+      }
 
-#banzukeContainer .proLink {
-  display: table-cell;
-  padding-left: 6px;
-  padding-right: 3px;
-  color: #373782;
-  cursor: pointer;
-}
+      #banzukeContainer .proLink {
+        color: black;
+        cursor: pointer;
+        text-shadow: 1px 1px #fff3;
+      }
 
-#selectedRikishiPanel {
-  position: sticky;
-  background: linear-gradient(transparent, #0000ffa3 50%);
-  padding: 5px;
-  margin: auto;
-  width: fit-content;
-  color: white;
-  text-shadow: 1px 1px #00000082;
-  border-radius: 0 0 5px 5px;
-  top: 0%;
-  padding-top: 15px;
-  text-align: center;
-}
+      #selectedRikishiPanel {
+        position: sticky;
+        background: linear-gradient(transparent, #0000ffa3 50%);
+        padding: 5px;
+        margin: auto;
+        width: fit-content;
+        color: white;
+        text-shadow: 1px 1px #00000082;
+        border-radius: 0 0 5px 5px;
+        top: 0%;
+        padding-top: 15px;
+        text-align: center;
+      }
 
-.marking {
-  width: 15px;
-  display: inline-block;
-  color: white;
-  cursor: default;
-  text-align: center;
-}
+      .marking {
+        width: 15px;
+        display: inline-block;
+        color: white;
+        cursor: default;
+        text-align: center;
+      }
 
-.kyujo {
-  background: #ffb9b9;
-  color: #515151;
-}
+      .kyujo {
+        background: #ffb9b9;
+        color: #515151;
+      }
 
-.intai {
-  background: #6f6f6f;
-}
+      .intai {
+        background: #6f6f6f;
+      }
 
-.marking + .h2h {
-  	width: calc(100% - 18px);
-	margin-left: 3px;
-}
+      .marking + .h2h {
+        width: calc(100% - 18px);
+        margin-left: 3px;
+      }
 
-.h2h:has(+ .marking) {
-  	width: calc(100% - 18px);
-	margin-right: 3px;
-}
+      .h2h:has(+ .marking) {
+        width: calc(100% - 18px);
+        margin-right: 3px;
+      }
 
-#legend {
-    border: none;
-    padding-top: 15px;
-}
+      #legend {
+        border: none;
+        padding-top: 15px;
+      }
 
-.legendItem {
-	width: auto !important;
-	display: inline-block !important;
-	white-space: nowrap;
-	margin-right: 10px;
-	margin-bottom: 10px;
-}
+      .legendItem {
+        width: auto !important;
+        display: inline-block !important;
+        white-space: nowrap;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
 
-#tableBottom {
-  height: 22px;
-  position: sticky;
-  bottom: 0;
-  background: #f8f8de;
-  left: 0;
-}
+      #tableBottom {
+        height: 22px;
+        position: sticky;
+        bottom: 0;
+        background: linear-gradient(#b3b3b3, #f4f4f4 50%);
+        left: 0;
+      }
 
-div > label {
-  border: 2px outset #000000a1;
-  background: #e8e8e8;
-  padding: 0px 3px;
-  color: #5c5c5c;
-  text-shadow: -1px -1px #ffffff80;
-  font-family: Segoe UI, Noto Sans, Open Sans;
-  font-size: 14px;
-}
+      div > label {
+        border: 2px outset #000000a1;
+        background: #e8e8e8;
+        padding: 0px 3px;
+        color: #5c5c5c;
+        text-shadow: -1px -1px #ffffff80;
+        font-family:
+          Segoe UI,
+          Noto Sans,
+          Open Sans;
+        font-size: 14px;
+      }
 
-div > label:hover {
-	cursor: pointer;
-	color: black;
-	border-color: #000000d6;
-}
+      div > label:hover {
+        cursor: pointer;
+        color: black;
+        border-color: #000000d6;
+      }
 
-label:has(> .siteToggle:checked) {
-  border-color: black;
-  background: lightgreen;
-  color: black;
-}
+      label:has(> .siteToggle:checked) {
+        border-color: black;
+        background: lightgreen;
+        color: black;
+      }
 
-#sumodbRadio {
-  border-radius: 5px 0 0 5px;
-}
+      #sumodbRadio {
+        border-radius: 5px 0 0 5px;
+      }
 
-#nskRadio {
-  border-radius: 0 5px 5px 0;
-}
+      #nskRadio {
+        border-radius: 0 5px 5px 0;
+      }
 
-#toggleContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 10px;
-}
+      #toggleContainer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin: 10px;
+      }
 
-#toggleContainer > div {
-  display: inline-flex;
-}
-
-</style>
-</body>
+      #toggleContainer > div {
+        display: inline-flex;
+      }
+    </style>
+  </body>
 </html>
