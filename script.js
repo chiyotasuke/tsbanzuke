@@ -44,6 +44,7 @@ window.onload = async function () {
   ];
   var divRankQty = [];
   var matchInfo = [];
+  var matchInfoSix = [];
   var activeRikishiId = [];
   var intaiRikishi = [
   ];
@@ -55,6 +56,7 @@ window.onload = async function () {
     timeId = 0;
   var bashoSelect = document.getElementById("bashoSelect");
   
+  document.getElementById("sixBashoToggle").checked = false;
   loading.id = "loading";
   loading.style.display = "none";
   loadingText.innerText = "";
@@ -204,9 +206,9 @@ window.onload = async function () {
         var westRank;
         var row = document.createElement("tr");
 
-        if (hierarchy[eastRank[0]] > 0) row.classList.add("sanyakuRow");
         if (typeof rikishi.west[i] == "undefined") rikishi.west.push({});
         else westRank = rikishi.west[i].rank.split(" ");
+        if (hierarchy[eastRank[0]] > 0 || hierarchy[westRank[0]] > 0) row.classList.add("sanyakuRow");
         if (eastRank[0] != westRank[0]) {
           if (hierarchy[eastRank[0]] > hierarchy[westRank[0]]) {
             rikishi.west.splice(i, 0, {});
@@ -227,8 +229,10 @@ window.onload = async function () {
           divShort;
 
         divShort = rankAbbr[eastRank[0]];
-        if (i > 8 && rikishi.east[i-1].rank.includes(rankNum))
+        if (i > 8 && rikishi.east[i-1].rank.includes(rankNum)) {
           rowRank.innerText = "TD";
+          rikishi.west.splice(i, 0, {});
+        }
         else {
           rowRank.innerText = divShort;
           if (hierarchy[eastRank[0]] < 1 || hierarchy[eastRank[0]] == null)
@@ -400,6 +404,7 @@ window.onload = async function () {
 
     //changeHref();
     $('input[name="rs"]').on("click", showOpponents);
+    $("#sixBashoToggle").on("change", showOpponents);
     async function showOpponents(event) {
       var allRadio = document.getElementsByName("rs");
       var prevClicked = document.querySelectorAll(".selected");
@@ -412,10 +417,12 @@ window.onload = async function () {
 
       //for (var i = 0; i < allRadio.length; i++)
       //  allRadio[i].setAttribute("disabled", "true");
-      document.getElementById("matchesBox").classList.add("hidden");
-      document.getElementById("matchesBox").close();
+      if (event.target.id != "sixBashoToggle") {
+        document.getElementById("matchesBox").classList.add("hidden");
+        document.getElementById("matchesBox").close();
+      }
       if (typeof prevClicked[0] != "undefined" && prevClicked[0] != null) {
-        if (event.target != prevClicked[0].nextSibling)
+        if (event.target != prevClicked[0].nextSibling && event.target.id != "sixBashoToggle")
           prevClicked[0].classList.remove("selected");
         if (
           typeof prevOpponents[0] != "undefined" &&
@@ -429,155 +436,190 @@ window.onload = async function () {
         if (typeof h2hText[0] != "undefined" && h2hText[0] != null) {
           while (h2hText.length) h2hText[0].remove();
         }
-        if (typeof sameHeya[0] != "undefined" && sameHeya[0] != null) {
+        if (typeof sameHeya[0] != "undefined" && sameHeya[0] != null && event.target.id != "sixBashoToggle") {
           for (var j = 0; j < sameHeya.length; j++)
             sameHeya[j].classList.remove("sameHeya");
         }
       }
-      if (!event.target.previousSibling.classList.contains("selected")) {
-        loadingMessage("", true);
+      if ((event.target.previousSibling != null && !event.target.previousSibling.classList.contains("selected")) || 
+          event.target.id == "sixBashoToggle") {
+        if (event.target.id != "sixBashoToggle" && !event.target.previousSibling.classList.contains("selected")) {
+          loadingMessage("Fetching", true);
 
-        var div;
-        var selectedRikishiHeya;
-        var aiteRadio = [];
-        var requestBody = [];
-        var selectedRikishiId = event.target.value;
-        var matchesResponse = await fetch(
-          "https://www.sumo-api.com/api/rikishi/" +
-            selectedRikishiId +
-            "/matches",
-        );
-        var matchesData = await matchesResponse.json();
-        var records;
-
-        //if (banzukeDate != "202501") {
-          var fetchInfo = await fetch(
+          var div;
+          var selectedRikishiHeya;
+          var aiteRadio = [];
+          var requestBody = [];
+          var selectedRikishiId = event.target.value;
+          var matchesResponse = await fetch(
             "https://www.sumo-api.com/api/rikishi/" +
               selectedRikishiId +
-              "?intai=true",
+              "/matches",
           );
-          var fetchInfo2;
-          var heyaRikishi;
+          var matchesData = await matchesResponse.json();
+          var records;
 
-          selectedRikishiHeya = await fetchInfo.json();
-          selectedRikishiHeya = selectedRikishiHeya.heya;
-          fetchInfo2 = await fetch(
-            "https://www.sumo-api.com/api/rikishis?heya=" +
-              selectedRikishiHeya +
-              "&intai=true",
-          );
-          heyaRikishi = await fetchInfo2.json();
-          heyaRikishi = heyaRikishi.records;
-          for (const r of heyaRikishi) {
-            var rInput = document.querySelector(
-              '[value="' + r.id + '"]',
+          //if (banzukeDate != "202501") {
+            var fetchInfo = await fetch(
+              "https://www.sumo-api.com/api/rikishi/" +
+                selectedRikishiId +
+                "?intai=true",
             );
+            var fetchInfo2;
+            var heyaRikishi;
 
-            if (rInput != null)
-              rInput.parentNode.classList.add("sameHeya");
+            selectedRikishiHeya = await fetchInfo.json();
+            selectedRikishiHeya = selectedRikishiHeya.heya;
+            fetchInfo2 = await fetch(
+              "https://www.sumo-api.com/api/rikishis?heya=" +
+                selectedRikishiHeya +
+                "&intai=true",
+            );
+            heyaRikishi = await fetchInfo2.json();
+            heyaRikishi = heyaRikishi.records;
+            for (const r of heyaRikishi) {
+              var rInput = document.querySelector(
+                '[value="' + r.id + '"]',
+              );
+
+              if (rInput != null)
+                rInput.parentNode.classList.add("sameHeya");
+            }
+          //}
+          if (selectedRikishiPanel.classList.contains("hidden")) {
+            document.getElementById("sixBashoToggle").checked = false;
+            selectedRikishiPanel.classList.remove("hidden");
           }
-        //}
-        if (selectedRikishiPanel.classList.contains("hidden"))
-          selectedRikishiPanel.classList.remove("hidden");
-        selectedRikishiPanel.innerText =
-          "Selected rikishi: " +
-          event.target.id.slice(0, -1) +
-          event.target.id.slice(-1).toLowerCase() +
-          " " +
-          event.target.previousSibling.innerText;
-        records = matchesData.records;
-        if (records == null) records = [];
-        matchInfo = [];
-        selectedRikishiHeya = event.target.dataset.inf;
-        event.target.previousSibling.classList.add("selected");
-        for (var i = 0; i < records.length; i++) {
-          var aiteId;
+          selectedRikishiPanel.children[0].innerText =
+            "Selected rikishi: " +
+            event.target.id.slice(0, -1) +
+            event.target.id.slice(-1).toLowerCase() +
+            " " +
+            event.target.previousSibling.innerText;
+          records = matchesData.records;
+          if (records == null) records = [];
+          matchInfo = [];
+          matchInfoSix = [];
+          selectedRikishiHeya = event.target.dataset.inf;
+          event.target.previousSibling.classList.add("selected");
+          for (var i = 0; i < records.length; i++) {
+            var aiteId;
 
-          if (records[i].eastId == selectedRikishiId)
-            aiteId = records[i].westId;
-          else aiteId = records[i].eastId;
-          if (
-            activeRikishiId.includes(aiteId) &&
-            records[i].bashoId < banzukeDate
-          ) {
-            var rikishiWon = true,
-              rikishiText = [],
-              east = records[i].eastRank.split(" "),
-              west = records[i].westRank.split(" "),
-              aiteRecord = matchInfo.find((m) => m.aite == aiteId);
-
-            if (aiteRecord == undefined) {
-              matchInfo.push({
-                aite: aiteId,
-                win: 0,
-                loss: 0,
-                fusenWin: 0,
-                fusenLoss: 0,
-                playoffWin: 0,
-                playoffLoss: 0,
-                matches: [],
-              });
-              aiteRecord = matchInfo.at(-1);
-            }
-            if (records[i].winnerId != selectedRikishiId) rikishiWon = false;
-            if (records[i].division == "Mae-zumo") {
-              east = "Mz " + records[i].eastShikona;
-              west = "Mz " + records[i].westShikona;
-            } else {
-              if (records[i].eastRank == "")
-                east = "--- " + records[i].eastShikona;
-              else
-                east =
-                  rankAbbr[east[0]] +
-                  east[1] +
-                  (east[2] == undefined
-                    ? "TD"
-                    : east[2].charAt(0).toLowerCase()) +
-                  " " +
-                  records[i].eastShikona;
-              if (records[i].westRank == "")
-                west = "--- " + records[i].westShikona;
-              else
-                west =
-                  rankAbbr[west[0]] +
-                  west[1] +
-                  (west[2] == undefined
-                    ? "TD"
-                    : west[2].charAt(0).toLowerCase()) +
-                  " " +
-                  records[i].westShikona;
-            }
             if (records[i].eastId == selectedRikishiId)
-              rikishiText = [east, west];
-            else rikishiText = [west, east];
-            aiteRecord.matches.push({
-              basho: records[i].bashoId,
-              day: records[i].day,
-              division: divAbbr[records[i].division],
-              won: rikishiWon,
-              rikishi: rikishiText[0],
-              aite: rikishiText[1],
-              kimarite: records[i].kimarite,
-            });
-            if (records[i].winnerId == selectedRikishiId) {
-              aiteRecord.win++;
-              if (records[i].kimarite == "fusen") aiteRecord.fusenWin++;
-              if (records[i].day > 15) aiteRecord.playoffWin++;
-            } else {
-              aiteRecord.loss++;
-              if (records[i].kimarite == "fusen") aiteRecord.fusenLoss++;
-              if (records[i].day > 15) aiteRecord.playoffLoss++;
+              aiteId = records[i].westId;
+            else aiteId = records[i].eastId;
+            if (
+              activeRikishiId.includes(aiteId) &&
+              records[i].bashoId < banzukeDate
+            ) {
+              var rikishiWon = true,
+                rikishiText = [],
+                east = records[i].eastRank.split(" "),
+                west = records[i].westRank.split(" "),
+                aiteRecord = matchInfo.find((m) => m.aite == aiteId),
+                aiteRecordSix = matchInfoSix.find((m) => m.aite == aiteId);
+              
+              if (aiteRecord == undefined) {
+                matchInfo.push({
+                  aite: aiteId,
+                  win: 0,
+                  loss: 0,
+                  fusenWin: 0,
+                  fusenLoss: 0,
+                  playoffWin: 0,
+                  playoffLoss: 0,
+                  matches: [],
+                });
+                aiteRecord = matchInfo.at(-1);
+              }
+              if (aiteRecordSix == undefined && parseInt(records[i].bashoId) > parseInt(banzukeDate) - 100) {
+                matchInfoSix.push({
+                  aite: aiteId,
+                  win: 0,
+                  loss: 0,
+                  fusenWin: 0,
+                  fusenLoss: 0,
+                  playoffWin: 0,
+                  playoffLoss: 0,
+                  matches: [],
+                });
+                aiteRecordSix = matchInfoSix.at(-1);
+              }
+              if (records[i].winnerId != selectedRikishiId) rikishiWon = false;
+              if (records[i].division == "Mae-zumo") {
+                east = "Mz " + records[i].eastShikona;
+                west = "Mz " + records[i].westShikona;
+              } else {
+                if (records[i].eastRank == "")
+                  east = "--- " + records[i].eastShikona;
+                else
+                  east =
+                    rankAbbr[east[0]] +
+                    east[1] +
+                    (east[2] == undefined
+                      ? "TD"
+                      : east[2].charAt(0).toLowerCase()) +
+                    " " +
+                    records[i].eastShikona;
+                if (records[i].westRank == "")
+                  west = "--- " + records[i].westShikona;
+                else
+                  west =
+                    rankAbbr[west[0]] +
+                    west[1] +
+                    (west[2] == undefined
+                      ? "TD"
+                      : west[2].charAt(0).toLowerCase()) +
+                    " " +
+                    records[i].westShikona;
+              }
+              if (records[i].eastId == selectedRikishiId)
+                rikishiText = [east, west];
+              else rikishiText = [west, east];
+              aiteRecord.matches.push({
+                basho: records[i].bashoId,
+                day: records[i].day,
+                division: divAbbr[records[i].division],
+                won: rikishiWon,
+                rikishi: rikishiText[0],
+                aite: rikishiText[1],
+                kimarite: records[i].kimarite,
+              });
+              if (parseInt(records[i].bashoId) > parseInt(banzukeDate) - 100) {
+                aiteRecordSix.matches.push(aiteRecord.matches.at(-1));
+                if (records[i].winnerId == selectedRikishiId) {
+                  aiteRecordSix.win++;
+                  if (records[i].kimarite == "fusen") aiteRecordSix.fusenWin++;
+                  if (records[i].day > 15) aiteRecordSix.playoffWin++;
+                } else {
+                  aiteRecordSix.loss++;
+                  if (records[i].kimarite == "fusen") aiteRecordSix.fusenLoss++;
+                  if (records[i].day > 15) aiteRecordSix.playoffLoss++;
+                }
+              }
+              if (records[i].winnerId == selectedRikishiId) {
+                aiteRecord.win++;
+                if (records[i].kimarite == "fusen") aiteRecord.fusenWin++;
+                if (records[i].day > 15) aiteRecord.playoffWin++;
+              } else {
+                aiteRecord.loss++;
+                if (records[i].kimarite == "fusen") aiteRecord.fusenLoss++;
+                if (records[i].day > 15) aiteRecord.playoffLoss++;
+              }
             }
           }
+          for (const button of document.querySelectorAll(
+            '[data-inf="' + event.target.dataset.inf + '"]',
+          )) {
+            if (button.dataset.inf != "" && !button.parentNode.classList.contains("sameHeya"))
+              button.parentNode.classList.add("sameHeya");
+          }
         }
-        for (const button of document.querySelectorAll(
-          '[data-inf="' + event.target.dataset.inf + '"]',
-        )) {
-          if (button.dataset.inf != "" && !button.parentNode.classList.contains("sameHeya"))
-            button.parentNode.classList.add("sameHeya");
-        }
-        for (var i = 0; i < matchInfo.length; i++) {
-          var aiteButton = $('input[value="' + matchInfo[i].aite + '"]')[0];
+
+        var selectedMatchInfo = document.getElementById("sixBashoToggle").checked ? matchInfoSix : matchInfo;
+
+        for (var i = 0; i < selectedMatchInfo.length; i++) {
+          var aiteButton = $('input[value="' + selectedMatchInfo[i].aite + '"]')[0];
           var record;
           var recordCell;
           var recordText = document.createElement("span");
@@ -588,19 +630,19 @@ window.onload = async function () {
             recordCell = aiteButton.parentNode.parentNode.previousSibling;
           else recordCell = aiteButton.parentNode.parentNode.nextSibling;
           recordText.classList.add("h2h");
-          record = matchInfo[i].win - matchInfo[i].fusenWin;
-          record += "-" + (matchInfo[i].loss - matchInfo[i].fusenLoss);
-          wins = matchInfo[i].win - matchInfo[i].fusenWin;
-          losses = matchInfo[i].loss - matchInfo[i].fusenLoss;
+          record = selectedMatchInfo[i].win - selectedMatchInfo[i].fusenWin;
+          record += "-" + (selectedMatchInfo[i].loss - selectedMatchInfo[i].fusenLoss);
+          wins = selectedMatchInfo[i].win - selectedMatchInfo[i].fusenWin;
+          losses = selectedMatchInfo[i].loss - selectedMatchInfo[i].fusenLoss;
           if (wins > 0 || losses > 0) {
             aiteButton.parentNode.classList.add("met");
             aiteButton.parentNode.style.background = generateColor(losses / (wins + losses), wins + losses);
           }
-          if (matchInfo[i].fusenWin > 0 || matchInfo[i].fusenLoss > 0) {
-            recordText.setAttribute("data-fusen", matchInfo[i].fusenWin + matchInfo[i].fusenLoss);
+          if (selectedMatchInfo[i].fusenWin > 0 || selectedMatchInfo[i].fusenLoss > 0) {
+            recordText.setAttribute("data-fusen", selectedMatchInfo[i].fusenWin + selectedMatchInfo[i].fusenLoss);
           }
-          fWins = matchInfo[i].fusenWin;
-          fLosses = matchInfo[i].fusenLoss;
+          fWins = selectedMatchInfo[i].fusenWin;
+          fLosses = selectedMatchInfo[i].fusenLoss;
           recordText.addEventListener("click", function (e) {
             var dialogBox = document.getElementById("matchesBox");
             var id,
@@ -627,7 +669,7 @@ window.onload = async function () {
               else
                 headerText.innerHTML += '<span class="fusen"> (+' + this.dataset.fusen + " fusen match)</span>";
             }
-            matches = matchInfo.find((obj) => obj.aite == id).matches;
+            matches = selectedMatchInfo.find((obj) => obj.aite == id).matches;
             table.id = "matchesTable";
             table.appendChild(document.createElement("tbody"));
             for (var j = 0; j < matches.length; j++) {
@@ -661,6 +703,7 @@ window.onload = async function () {
                 if (k < 2) {
                   link = document.createElement("a");
                   link.href = links[k].url;
+                  link.target = "_blank";
                 }
                 else
                   link = document.createElement("span");
@@ -804,9 +847,11 @@ window.onload = async function () {
             recordCell.appendChild(recordText);
           else recordCell.prepend(recordText);
         }
-        loadingMessage("", false);
+        if (event.target.id != "sixBashoToggle")
+          loadingMessage("", false);
       } else {
-        event.target.previousSibling.classList.remove("selected");
+        if (event.target.id != "sixBashoToggle")
+          event.target.previousSibling.classList.remove("selected");
         selectedRikishiPanel.classList.add("hidden");
         event.target.checked = false;
       }
