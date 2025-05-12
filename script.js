@@ -52,8 +52,7 @@ window.onload = async function () {
   ];
   var loading = document.createElement("div"),
     loadingPanel = document.createElement("span"),
-    loadingText = document.createElement("span"),
-    timeId = 0;
+    loadingText = document.createElement("span");
   var bashoSelect = document.getElementById("bashoSelect");
   
   document.getElementById("sixBashoToggle").checked = false;
@@ -153,23 +152,20 @@ window.onload = async function () {
       loadingPanel.parentElement.style.display = "inline-grid";
       loadingGif.src = "shiko.gif";
       loadingPanel.appendChild(loadingGif);
-      timeId = setTimeout(function () {
-        var notice = document.createElement("a");
 
-        notice.className = "notice";
-        notice.innerText = "Click to close";
-        notice.addEventListener("click", function () {
-          loadingPanel.parentElement.style.display = "none";
-          loadingPanel.children[1].remove();
-        });
-        loadingText.prepend(notice);
-      }
-      , 8000);
+      var notice = document.createElement("a");
+
+      notice.className = "notice";
+      notice.innerText = "Close";
+      notice.addEventListener("click", function () {
+        loadingPanel.parentElement.style.display = "none";
+        loadingPanel.children[1].remove();
+      });
+      loadingText.prepend(notice);
     }
     else {
       loadingPanel.parentElement.style.display = "none";
       loadingPanel.children[1].remove();
-      clearTimeout(timeId);
     }
   }
   async function createMakuuchiBanzuke(callback) {
