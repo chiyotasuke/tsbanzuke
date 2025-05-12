@@ -229,9 +229,10 @@ window.onload = async function () {
           divShort;
 
         divShort = rankAbbr[eastRank[0]];
-        if (i > 8 && rikishi.east[i-1].rank.includes(rankNum)) {
+        if (i > 0 && ["Ms", "Sd"].includes(divShort) && rikishi.east[i-1].rank.includes(rankNum)) {
           rowRank.innerText = "TD";
-          rikishi.west.splice(i, 0, {});
+          if (rankNum == "10" || rankNum == "15")
+            rikishi.west.splice(i, 0, {});
         }
         else {
           rowRank.innerText = divShort;
