@@ -1,5 +1,5 @@
 window.onload = async function () {
-  var banzukeDate = "202505"; // 196909 until now for sekitori; from 198901 all lower division matchups are complete
+  var banzukeDate = "202507"; // 196909 until now for sekitori; from 198901 all lower division matchups are complete
   const divisions = [
     "Makuuchi",
     "Juryo",
