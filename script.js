@@ -628,7 +628,7 @@ window.onload = async function () {
           else recordCell = aiteButton.parentNode.parentNode.nextSibling;
           recordText.classList.add("h2h");
           record = selectedMatchInfo[i].win - selectedMatchInfo[i].fusenWin;
-          record += "-" + (selectedMatchInfo[i].loss - selectedMatchInfo[i].fusenLoss);
+          record += "–" + (selectedMatchInfo[i].loss - selectedMatchInfo[i].fusenLoss);
           wins = selectedMatchInfo[i].win - selectedMatchInfo[i].fusenWin;
           losses = selectedMatchInfo[i].loss - selectedMatchInfo[i].fusenLoss;
           if (wins > 0 || losses > 0) {
